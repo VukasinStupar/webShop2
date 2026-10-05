@@ -14,6 +14,8 @@
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.12" />
+
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,6 +26,10 @@
 
 	<ItemGroup>
 		<Folder Include="model\enums\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include=".github\workflows\ci.yml" />
 	</ItemGroup>
 
 </Project>

@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="../webShop2.Tests/webShop2.Tests.csproj" />
   <Project Path="webShop2.csproj" />
 </Solution>
