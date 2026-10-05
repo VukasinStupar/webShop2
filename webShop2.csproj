@@ -32,4 +32,8 @@
 	  <None Include=".github\workflows\ci.yml" />
 	</ItemGroup>
 
+	<ItemGroup>
+    	<Compile Remove="webShop2.Tests\**" />
+	</ItemGroup>
+
 </Project>

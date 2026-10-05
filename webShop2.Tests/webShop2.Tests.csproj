@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\webShop2\webShop2.csproj" />
+  <ProjectReference Include="..\webShop2.csproj" />
   </ItemGroup>
 
 </Project>
