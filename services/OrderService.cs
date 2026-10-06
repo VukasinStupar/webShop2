@@ -67,8 +67,8 @@ public class OrderService : IOrderService
     }
 
     public async Task<Order?> UpdateAsync(
-        int id,
-        Order dto)
+    int id,
+    Order orderUpdate)
     {
         Order? order =
             await _unitOfWork.Orders.GetByIdAsync(id);
@@ -77,6 +77,9 @@ public class OrderService : IOrderService
         {
             return null;
         }
+
+        order.Number = orderUpdate.Number;
+        order.Status = orderUpdate.Status;
 
         _unitOfWork.Orders.Update(order);
         await _unitOfWork.SaveChangesAsync();
