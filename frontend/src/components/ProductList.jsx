@@ -24,7 +24,7 @@ function ProductList({
                 // );
                 const apiUrl = import.meta.env.VITE_API_URL;
 
-const response = await fetch(`${apiUrl}/api/Category`);
+const response = await fetch(`${apiUrl}/api/Product`);
 
                 if (!response.ok) {
                     throw new Error("Neuspešno učitavanje proizvoda.");
