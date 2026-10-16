@@ -1,64 +1,150 @@
+/* ========================================
+   CATEGORY STATS — DARK PREMIUM
+======================================== */
+
 .category-stats {
-    max-width: 1200px;
+    position: relative;
+    isolation: isolate;
+
+    width: min(100% - 32px, 1200px);
     margin: 48px auto 32px;
-    padding: 24px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: 26px 28px;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    border: 1px solid rgba(148, 163, 184, 0.17);
+    border-radius: 17px;
+
+    background: linear-gradient(
+        155deg,
+        rgba(22, 34, 54, 0.97),
+        rgba(12, 20, 34, 0.98)
+    );
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+    color: #a0b0c7;
+}
+
+/* Narandžasti akcenat na vrhu kartice */
+.category-stats::before {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    right: 0;
+    left: 0;
+
+    height: 3px;
+    background: linear-gradient(90deg, #f97316, #fb923c, #fbbf24);
+
+    content: "";
 }
 
 .category-stats__title {
-    margin: 0 0 20px;
-    font-size: 1.25rem;
+    margin: 0 0 24px;
+
+    color: #f1f7ff;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
 }
 
 .category-stats__list {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-}
-
-.category-stats__row {
-    display: grid;
-    grid-template-columns: 180px 1fr 80px;
-    align-items: center;
     gap: 16px;
 }
 
+/* ime kategorije | progres bar | broj komada */
+.category-stats__row {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr) 72px;
+    align-items: center;
+    gap: 18px;
+}
+
 .category-stats__name {
-    font-weight: 500;
     overflow: hidden;
+
+    color: #e2ecfa;
+    font-size: 14px;
+    font-weight: 700;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* suva pozadina = prazan deo */
+/* Spoljna traka: svetlije siva = još slobodno mesto */
 .category-stats__bar {
+    display: block;
+    width: 100%;
     height: 12px;
-    background: #e5e7eb;
-    border-radius: 999px;
     overflow: hidden;
+
+    border-radius: 999px;
+    background: rgba(203, 213, 225, 0.28);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
-/* narandžasto = popunjen deo */
+/* Unutrašnja traka: narandžasto = popunjeno */
 .category-stats__fill {
+    display: block;
     height: 100%;
-    background: #f97316;
-    border-radius: 999px;
-    transition: width 0.6s ease;
+
+    border-radius: inherit;
+    background: linear-gradient(90deg, #f97316, #fb923c);
+    box-shadow: 0 0 12px rgba(249, 115, 22, 0.35);
+
+    transition: width 600ms ease;
 }
 
 .category-stats__count {
-    text-align: right;
+    color: #e2ecfa;
+    font-size: 13px;
+    font-weight: 800;
     font-variant-numeric: tabular-nums;
-    color: #4b5563;
+    text-align: right;
+    white-space: nowrap;
 }
 
-@media (max-width: 600px) {
-    .category-stats__row {
-        grid-template-columns: 1fr 60px;
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 760px) {
+    .category-stats {
+        padding: 22px 20px;
     }
+
+    .category-stats__row {
+        grid-template-columns: 130px minmax(0, 1fr) 64px;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .category-stats {
+        padding: 20px 16px;
+        border-radius: 14px;
+    }
+
+    .category-stats__row {
+        grid-template-columns: minmax(0, 1fr) auto;
+        row-gap: 8px;
+    }
+
     .category-stats__name {
         grid-column: 1 / -1;
+    }
+}
+
+/* ========================================
+   PRISTUPAČNOST
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .category-stats__fill {
+        transition: none;
     }
 }
