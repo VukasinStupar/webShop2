@@ -155,17 +155,23 @@ const response = await fetch(`${apiUrl}/api/Category`);
     }, []);
 
     // DODATO: broj proizvoda po kategoriji
+    // const stats = categories.map((cat) => ({
+    //     name: cat.name,
+    //     count: products.filter(
+    //         (p) =>
+    //             p.categoryId === cat.id ||
+    //             p.category === cat.name ||
+    //             p.categoryName === cat.name ||
+    //             p.category?.id === cat.id ||
+    //             p.category?.name === cat.name
+    //     ).length,
+    // }));
     const stats = categories.map((cat) => ({
-        name: cat.name,
-        count: products.filter(
-            (p) =>
-                p.categoryId === cat.id ||
-                p.category === cat.name ||
-                p.categoryName === cat.name ||
-                p.category?.id === cat.id ||
-                p.category?.name === cat.name
-        ).length,
-    }));
+    name: cat.name,
+    count: products
+        .filter((p) => Number(p.categoryId) === Number(cat.id))
+        .reduce((sum, p) => sum + (Number(p.quantity) || 0), 0),
+}));
 
     return (
         <div className="app">
