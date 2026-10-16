@@ -121,10 +121,9 @@ const response = await fetch(`${apiUrl}/api/Category`);
 
                                 <p>{product.description}</p>
 
-                                <p className="product-card__price">
-                                    {product.price.toLocaleString("sr-RS")} RSD
-                                </p>
-
+                                {product.price == null
+  ? "Cena nije navedena"
+  : Number(product.price).toLocaleString("sr-RS")} RSD
                                 <p>
                                     Dostupna količina: {product.quantity}
                                 </p>
