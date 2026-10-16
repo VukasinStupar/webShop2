@@ -4,10 +4,11 @@
     top: 0;
     z-index: 100;
     width: 100%;
-    background: rgba(255, 255, 255, 0.92);
-    border-bottom: 1px solid rgba(231, 234, 240, 0.9);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    background: rgba(8, 13, 24, 0.82);
+    border-bottom: 1px solid rgba(56, 189, 248, 0.16);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
 }
 
 .site-header__inner {
@@ -34,24 +35,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid rgba(125, 211, 252, 0.3);
     border-radius: 14px;
-    background: linear-gradient(135deg, #3568f5, #1746c7);
+    background: linear-gradient(135deg, #38bdf8, #2563eb 65%, #4338ca);
     color: #ffffff;
     font-size: 23px;
     font-weight: 800;
-    box-shadow: 0 5px 14px rgba(36, 87, 230, 0.22);
+    box-shadow:
+        0 5px 18px rgba(37, 99, 235, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
     transition:
         transform 220ms ease,
         box-shadow 220ms ease;
 }
 
 .site-header__brand:hover .site-header__brand-icon {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(36, 87, 230, 0.3);
+    transform: translateY(-2px) rotate(-3deg);
+    box-shadow:
+        0 8px 26px rgba(56, 189, 248, 0.25),
+        0 0 20px rgba(45, 212, 191, 0.12);
 }
 
 .site-header__brand-name {
-    color: #172033;
+    color: #f1f7ff;
     font-size: 18px;
     font-weight: 800;
     letter-spacing: -0.6px;
@@ -66,7 +72,7 @@
 .site-header__nav-link {
     position: relative;
     padding: 8px 0;
-    color: #667085;
+    color: #a6b5cb;
     font-size: 14px;
     font-weight: 600;
     transition: color 180ms ease;
@@ -79,7 +85,7 @@
     left: 0;
     height: 2px;
     border-radius: 2px;
-    background: #2457e6;
+    background: linear-gradient(90deg, #38bdf8, #2dd4bf);
     content: "";
     transform: scaleX(0);
     transform-origin: left;
@@ -88,7 +94,7 @@
 
 .site-header__nav-link:hover,
 .site-header__nav-link--active {
-    color: #2457e6;
+    color: #67e8f9;
 }
 
 .site-header__nav-link:hover::after,
@@ -104,24 +110,30 @@
     align-items: center;
     gap: 10px;
     padding: 5px;
-    border: 1px solid #e5e9f1;
+    border: 1px solid rgba(148, 163, 184, 0.22);
     border-radius: 14px;
-    background: #f7f8fb;
+    background: rgba(17, 26, 43, 0.88);
     transition:
         border-color 200ms ease,
         background-color 200ms ease,
         box-shadow 200ms ease;
 }
 
+.site-header__search:hover {
+    border-color: rgba(56, 189, 248, 0.35);
+}
+
 .site-header__search:focus-within {
-    border-color: #9bb5ff;
-    background: #ffffff;
-    box-shadow: 0 0 0 4px rgba(36, 87, 230, 0.08);
+    border-color: #38bdf8;
+    background: rgba(23, 35, 56, 0.98);
+    box-shadow:
+        0 0 0 3px rgba(56, 189, 248, 0.1),
+        0 0 22px rgba(56, 189, 248, 0.07);
 }
 
 .site-header__search-icon {
     padding-left: 10px;
-    color: #667085;
+    color: #67e8f9;
     font-size: 25px;
 }
 
@@ -132,12 +144,12 @@
     border: 0;
     outline: none;
     background: transparent;
-    color: #172033;
+    color: #f1f7ff;
     font-size: 14px;
 }
 
 .site-header__search-input::placeholder {
-    color: #98a2b3;
+    color: #8292aa;
 }
 
 .site-header__search-input:focus-visible {
@@ -147,12 +159,13 @@
 .site-header__search-button {
     padding: 11px 17px;
     flex-shrink: 0;
-    border: 0;
+    border: 1px solid rgba(125, 211, 252, 0.25);
     border-radius: 10px;
-    background: #2457e6;
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
     color: #ffffff;
     font-size: 13px;
     font-weight: 700;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.18);
     transition:
         background-color 180ms ease,
         box-shadow 180ms ease,
@@ -160,8 +173,10 @@
 }
 
 .site-header__search-button:hover {
-    background: #1746c7;
-    box-shadow: 0 4px 12px rgba(36, 87, 230, 0.22);
+    background: linear-gradient(135deg, #38bdf8, #3b82f6);
+    box-shadow:
+        0 5px 18px rgba(56, 189, 248, 0.22),
+        0 0 18px rgba(45, 212, 191, 0.08);
     transform: translateY(-1px);
 }
 

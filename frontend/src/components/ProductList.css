@@ -1,24 +1,55 @@
 ﻿
+/* ========================================
+   PRODUCT LIST — DARK PREMIUM
+======================================== */
+
 .product-list {
     min-width: 0;
     flex: 1 1 0;
+
     display: flex;
     flex-direction: column;
     gap: 18px;
+
+    scroll-margin-top: 24px;
 }
 
+/* ========================================
+   TRAKA SA REZULTATIMA
+======================================== */
+
 .product-list__toolbar {
+    position: relative;
     min-height: 62px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 12px;
+
     padding: 15px 18px;
-    border: 1px solid #e7eaf0;
+
+    border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 14px;
-    background: #ffffff;
-    box-shadow: 0 3px 12px rgba(23, 32, 51, 0.025);
+
+    background: linear-gradient(
+        135deg,
+        rgba(20, 31, 50, 0.96),
+        rgba(13, 22, 37, 0.97)
+    );
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+    transition:
+        border-color 220ms ease,
+        box-shadow 220ms ease;
+}
+
+.product-list__toolbar:hover {
+    border-color: rgba(56, 189, 248, 0.22);
 }
 
 .product-list__result {
@@ -29,35 +60,50 @@
 }
 
 .product-list__result-label {
-    color: #667085;
+    color: #a0b0c7;
     font-size: 12px;
 }
 
 .product-list__result-value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     padding: 6px 10px;
-    border: 1px solid #e0e9ff;
+
+    border: 1px solid rgba(56, 189, 248, 0.24);
     border-radius: 8px;
-    background: #f0f5ff;
-    color: #2457e6;
+
+    background: rgba(14, 165, 233, 0.12);
+    color: #67e8f9;
+
     font-size: 11px;
     font-weight: 800;
+    font-variant-numeric: tabular-nums;
+
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
 }
 
 .product-list__search {
     max-width: 100%;
-    color: #667085;
+    color: #9aabc2;
     font-size: 12px;
     overflow-wrap: anywhere;
 }
 
 .product-list__search strong {
-    color: #172033;
+    color: #e6f5ff;
     font-weight: 700;
 }
+
+/* ========================================
+   SADRŽAJ I STANJA UČITAVANJA
+======================================== */
 
 .product-list__content {
     min-width: 0;
     min-height: 300px;
+
     display: flex;
     flex-direction: column;
 }
@@ -65,63 +111,129 @@
 .product-list__content > p {
     margin: 0;
     padding: 22px;
-    border: 1px solid #e7eaf0;
+
+    border: 1px solid rgba(148, 163, 184, 0.18);
     border-radius: 14px;
-    background: #ffffff;
-    color: #667085;
+
+    background: rgba(17, 26, 43, 0.94);
+    color: #a0b0c7;
+
     font-size: 14px;
     line-height: 1.7;
 }
 
-/* Mreža proizvoda */
+/* ========================================
+   MREŽA PROIZVODA
+======================================== */
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(min(100%, 240px), 1fr)
+    );
+
     align-items: stretch;
     gap: 20px;
 }
 
-/* Kartica proizvoda */
+/* ========================================
+   KARTICA PROIZVODA
+======================================== */
 
 .product-card {
     position: relative;
+    isolation: isolate;
     min-width: 0;
+
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+
     padding: 22px;
     overflow: hidden;
-    border: 1px solid #e7eaf0;
+
+    border: 1px solid rgba(148, 163, 184, 0.17);
     border-radius: 17px;
-    background: #ffffff;
-    box-shadow: 0 3px 14px rgba(23, 32, 51, 0.025);
+
+    background: linear-gradient(
+        155deg,
+        rgba(22, 34, 54, 0.97),
+        rgba(12, 20, 34, 0.98)
+    );
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
     transition:
         transform 240ms ease,
         border-color 240ms ease,
-        box-shadow 240ms ease;
+        box-shadow 240ms ease,
+        background-color 240ms ease;
 }
+
+/* Gornji svetlosni akcenat */
 
 .product-card::before {
     position: absolute;
+    z-index: -1;
     top: 0;
     right: 0;
     left: 0;
+
     height: 3px;
-    background: linear-gradient(90deg, #2457e6, #83b5ff);
+
+    background: linear-gradient(
+        90deg,
+        #38bdf8,
+        #2dd4bf,
+        #818cf8
+    );
+
     content: "";
+
     opacity: 0;
-    transform: scaleX(0.65);
+    transform: scaleX(0.55);
     transform-origin: left;
+
     transition:
         opacity 240ms ease,
         transform 240ms ease;
 }
 
+/* Diskretan sjaj u pozadini kartice */
+
+.product-card::after {
+    position: absolute;
+    z-index: -1;
+    top: -75px;
+    right: -75px;
+
+    width: 150px;
+    height: 150px;
+
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(56, 189, 248, 0.08),
+        transparent 70%
+    );
+
+    content: "";
+    opacity: 0;
+
+    transition: opacity 260ms ease;
+}
+
 .product-card:hover {
-    border-color: #d2defa;
-    box-shadow: 0 14px 32px rgba(23, 50, 100, 0.09);
+    border-color: rgba(56, 189, 248, 0.35);
+
+    box-shadow:
+        0 16px 36px rgba(0, 0, 0, 0.24),
+        0 0 24px rgba(56, 189, 248, 0.055);
+
     transform: translateY(-4px);
 }
 
@@ -130,44 +242,75 @@
     transform: scaleX(1);
 }
 
+.product-card:hover::after {
+    opacity: 1;
+}
+
+/* Naziv proizvoda */
+
 .product-card h3 {
     margin: 0;
-    color: #172033;
+
+    color: #f1f7ff;
     font-size: 16px;
     font-weight: 800;
     line-height: 1.45;
     letter-spacing: -0.3px;
+
     overflow-wrap: anywhere;
+
+    transition: color 200ms ease;
 }
+
+.product-card:hover h3 {
+    color: #a5f3fc;
+}
+
+/* Opis i ostali podaci */
 
 .product-card > p {
     margin: 0;
-    color: #667085;
+
+    color: #a0b0c7;
     font-size: 12px;
     line-height: 1.7;
+
     overflow-wrap: anywhere;
 }
+
+/* Cena */
 
 .product-card .product-card__price {
     margin-top: auto;
     padding-top: 5px;
-    color: #2457e6;
+
+    color: #67e8f9;
     font-size: 22px;
     font-weight: 800;
     line-height: 1.3;
     letter-spacing: -0.7px;
+
+    font-variant-numeric: tabular-nums;
+
+    text-shadow: 0 0 18px rgba(56, 189, 248, 0.08);
 }
+
+/* Rezervisano za dodatni tekst ispod cene.
+   Pseudo-element je prazan dok mu ne zadamo content. */
 
 .product-card__price::after {
     display: block;
     margin-top: 4px;
-    color: #98a2b3;
+
+    color: #8292aa;
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0;
 }
 
-/* Responsive raspored */
+/* ========================================
+   RESPONSIVE RASPORED
+======================================== */
 
 @media (max-width: 1000px) {
     .product-grid {
@@ -181,7 +324,11 @@
 
 @media (max-width: 760px) {
     .product-grid {
-        grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(min(100%, 220px), 1fr)
+        );
+
         gap: 14px;
     }
 
@@ -199,6 +346,7 @@
         align-items: flex-start;
         flex-direction: column;
         gap: 10px;
+
         border-radius: 12px;
     }
 
@@ -226,11 +374,16 @@
     }
 }
 
-/* Pristupačnost */
+/* ========================================
+   PRISTUPAČNOST
+======================================== */
 
 @media (prefers-reduced-motion: reduce) {
+    .product-list__toolbar,
     .product-card,
-    .product-card::before {
+    .product-card::before,
+    .product-card::after,
+    .product-card h3 {
         transition: none;
     }
 
@@ -239,6 +392,114 @@
     }
 }
 
-.product-list {
-    scroll-margin-top: 24px;
+
+/* Dodatni elementi kartice proizvoda */
+
+.product-card__top {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
 }
+
+.product-card__tag {
+    color: #67e8f9;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.product-card__status {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 5px 9px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.product-card__status--available {
+    border-color: rgba(45, 212, 191, 0.22);
+    background: rgba(45, 212, 191, 0.1);
+    color: #5eead4;
+}
+
+.product-card__status--unavailable {
+    border-color: rgba(251, 113, 133, 0.24);
+    background: rgba(251, 113, 133, 0.1);
+    color: #fda4af;
+}
+
+.product-card__status--default {
+    border-color: rgba(148, 163, 184, 0.2);
+    background: rgba(148, 163, 184, 0.08);
+    color: #cbd5e1;
+}
+
+.product-card .product-card__description {
+    color: #a0b0c7;
+    overflow-wrap: anywhere;
+}
+
+.product-card__stock {
+    width: 100%;
+    margin-top: 4px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(148, 163, 184, 0.13);
+}
+
+.product-card__stock-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #a0b0c7;
+    font-size: 11px;
+}
+
+.product-card__stock-heading strong {
+    color: #e2ecfa;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.product-card__progress {
+    width: 100%;
+    height: 6px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.15);
+}
+
+.product-card__progress-bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #0ea5e9, #2dd4bf);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    transition: width 350ms ease;
+}
+
+.product-card__stock-note {
+    display: block;
+    margin-top: 7px;
+    color: #8292aa;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .product-card__progress-bar {
+        transition: none;
+    }
+}
+
+

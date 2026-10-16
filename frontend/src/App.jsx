@@ -19,8 +19,10 @@ function App() {
                 //     "https://localhost:51540/api/Category"
                 // );
 
-                const apiUrl = import.meta.env.VITE_API_URL;
+                const apiUrl =
+    import.meta.env.VITE_API_URL || "https://localhost:51540";
 
+console.log("API adresa:", apiUrl);
 const response = await fetch(`${apiUrl}/api/Category`);
 
                 if (!response.ok) {

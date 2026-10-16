@@ -1,31 +1,41 @@
 ﻿
+/* ================================
+   MARKETPLACE — DARK PREMIUM
+================================ */
+
 .marketplace {
+    position: relative;
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 28px;
     scroll-margin-top: 110px;
+    animation: fade-in-up 550ms ease both;
 }
 
 .marketplace__heading {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
 }
 
 .marketplace__eyebrow {
     display: inline-block;
-    color: #2457e6;
+    color: #67e8f9;
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.7px;
+    text-transform: uppercase;
 }
 
 .marketplace__title {
     margin: 8px 0 0;
-    color: #172033;
-    font-size: clamp(25px, 3vw, 30px);
+    color: #f1f7ff;
+    font-size: clamp(25px, 3vw, 32px);
     font-weight: 800;
     letter-spacing: -1px;
     line-height: 1.2;
@@ -35,10 +45,12 @@
 .marketplace__description {
     max-width: 560px;
     margin: 10px 0 0;
-    color: #667085;
+    color: #a0b0c7;
     font-size: 14px;
     line-height: 1.75;
 }
+
+/* Glavni raspored: filteri + proizvodi */
 
 .marketplace__layout {
     display: grid;
@@ -48,6 +60,8 @@
     width: 100%;
 }
 
+/* Tablet */
+
 @media (max-width: 1000px) {
     .marketplace__layout {
         grid-template-columns: 220px minmax(0, 1fr);
@@ -55,10 +69,16 @@
     }
 }
 
+/* Mobilni uređaji */
+
 @media (max-width: 760px) {
     .marketplace {
         gap: 22px;
         scroll-margin-top: 150px;
+    }
+
+    .marketplace__heading {
+        padding-bottom: 18px;
     }
 
     .marketplace__layout {
@@ -97,8 +117,11 @@
     }
 }
 
+/* Pristupačnost */
+
 @media (prefers-reduced-motion: reduce) {
     .marketplace {
+        animation: none;
         scroll-behavior: auto;
     }
 }
