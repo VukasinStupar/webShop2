@@ -56,12 +56,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ReactFrontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173")
+            .WithOrigins(
+                "http://localhost:5173",
+                "https://webshop2-92tu.onrender.com"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
-
 builder.Services.AddControllers();
 
 var app = builder.Build();
