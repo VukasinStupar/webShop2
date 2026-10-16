@@ -1,5 +1,5 @@
 ﻿
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EmptyProducts from "./EmptyProducts";
 import "./ProductList.css";
 
@@ -7,11 +7,14 @@ function ProductList({
     search,
     selectedCategory,
     categories = [],
-    sortBy = "recommended"
+    sortBy = "recommended",
+    shouldScrollToProducts = false
 }) {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+
+    const productListRef = useRef(null);
 
     useEffect(() => {
         async function loadProducts() {
@@ -19,12 +22,8 @@ function ProductList({
                 setLoading(true);
                 setError("");
 
-                // const response = await fetch(
-                //     "https://localhost:51540/api/Product"
-                // );
                 const apiUrl = import.meta.env.VITE_API_URL;
-
-const response = await fetch(`${apiUrl}/api/Product`);
+                const response = await fetch(`${apiUrl}/api/Product`);
 
                 if (!response.ok) {
                     throw new Error("Neuspešno učitavanje proizvoda.");
@@ -44,7 +43,9 @@ const response = await fetch(`${apiUrl}/api/Product`);
         loadProducts();
     }, []);
 
-    const normalizedSearch = (search ?? "").trim().toLocaleLowerCase("sr");
+    const normalizedSearch = (search ?? "")
+        .trim()
+        .toLocaleLowerCase("sr");
 
     const selectedCategoryId = categories.find(
         (category) => category.name === selectedCategory
@@ -52,7 +53,8 @@ const response = await fetch(`${apiUrl}/api/Product`);
 
     const filteredProducts = products.filter((product) => {
         const productName = (product.name ?? "").toLocaleLowerCase("sr");
-        const productDescription = (product.description ?? "").toLocaleLowerCase("sr");
+        const productDescription = (product.description ?? "")
+            .toLocaleLowerCase("sr");
 
         const matchesSearch =
             productName.includes(normalizedSearch) ||
@@ -83,8 +85,27 @@ const response = await fetch(`${apiUrl}/api/Product`);
         }
     });
 
+    useEffect(() => {
+        if (
+            shouldScrollToProducts &&
+            !loading &&
+            !error &&
+            sortedProducts.length > 0
+        ) {
+            productListRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    }, [
+        shouldScrollToProducts,
+        loading,
+        error,
+        sortedProducts.length
+    ]);
+
     return (
-        <div className="product-list">
+        <div className="product-list" ref={productListRef}>
             <div className="product-list__toolbar">
                 <div className="product-list__result">
                     <span className="product-list__result-label">
@@ -122,8 +143,9 @@ const response = await fetch(`${apiUrl}/api/Product`);
                                 <p>{product.description}</p>
 
                                 {product.price == null
-  ? "Cena nije navedena"
-  : Number(product.price).toLocaleString("sr-RS")} RSD
+                                    ? "Cena nije navedena"
+                                    : Number(product.price).toLocaleString("sr-RS")} RSD
+
                                 <p>
                                     Dostupna količina: {product.quantity}
                                 </p>

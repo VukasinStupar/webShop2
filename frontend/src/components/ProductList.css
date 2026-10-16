@@ -238,3 +238,7 @@
         transform: none;
     }
 }
+
+.product-list {
+    scroll-margin-top: 24px;
+}
