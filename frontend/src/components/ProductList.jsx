@@ -19,9 +19,12 @@ function ProductList({
                 setLoading(true);
                 setError("");
 
-                const response = await fetch(
-                    "https://localhost:51540/api/Product"
-                );
+                // const response = await fetch(
+                //     "https://localhost:51540/api/Product"
+                // );
+                const apiUrl = import.meta.env.VITE_API_URL;
+
+const response = await fetch(`${apiUrl}/api/Category`);
 
                 if (!response.ok) {
                     throw new Error("Neuspešno učitavanje proizvoda.");

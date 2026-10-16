@@ -15,9 +15,13 @@ function App() {
     useEffect(() => {
         async function getCategories() {
             try {
-                const response = await fetch(
-                    "https://localhost:51540/api/Category"
-                );
+                // const response = await fetch(
+                //     "https://localhost:51540/api/Category"
+                // );
+
+                const apiUrl = import.meta.env.VITE_API_URL;
+
+const response = await fetch(`${apiUrl}/api/Category`);
 
                 if (!response.ok) {
                     throw new Error(
