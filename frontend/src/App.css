@@ -1,0 +1,170 @@
+
+/* ================================
+   GLOBALNI DIZAJN — DUKA SHOP
+================================ */
+
+:root {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+
+    color: #172033;
+    background: #f7f8fa;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --color-primary: #2457e6;
+    --color-primary-hover: #1746c7;
+    --color-text: #172033;
+    --color-text-muted: #667085;
+    --color-background: #f7f8fa;
+    --color-surface: #ffffff;
+    --color-border: #e7eaf0;
+
+    --radius-small: 8px;
+    --radius-medium: 14px;
+    --radius-large: 22px;
+
+    --shadow-card: 0 4px 16px rgba(23, 32, 51, 0.05);
+    --shadow-card-hover: 0 14px 32px rgba(23, 32, 51, 0.12);
+
+    --transition-fast: 180ms ease;
+    --transition-normal: 280ms ease;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    color: var(--color-text);
+    background: var(--color-background);
+}
+
+body,
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+    font-size: inherit;
+}
+
+button,
+a,
+input,
+select {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(36, 87, 230, 0.35);
+    outline-offset: 3px;
+}
+
+::selection {
+    color: #ffffff;
+    background: var(--color-primary);
+}
+
+/* ================================
+   GLAVNI RASPORED
+================================ */
+
+#root {
+    min-height: 100vh;
+}
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app__main {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 32px 40px 64px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+/* ================================
+   ANIMACIJE
+================================ */
+
+a,
+button,
+input,
+select {
+    transition:
+        color var(--transition-fast),
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+/* Poštujemo korisnike koji preferiraju
+   manje animacija. */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+    .app__main {
+        padding: 24px 20px 48px;
+        gap: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app__main {
+        padding: 20px 14px 36px;
+        gap: 26px;
+    }
+}

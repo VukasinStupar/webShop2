@@ -28,6 +28,7 @@ public class ProductController : ControllerBase
         List<Product> products =
             await _service.GetAllAsync();
 
+
         List<ProductDto> dto =
             new List<ProductDto>();
 
@@ -35,7 +36,6 @@ public class ProductController : ControllerBase
         {
             dto.Add(_mapper.ToDto(product));
         }
-
         return Ok(dto);
     }
 

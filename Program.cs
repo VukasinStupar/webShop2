@@ -50,11 +50,25 @@ builder.Services.AddScoped<PaymentMapper>();
 builder.Services.AddScoped<ProductAttributeMapper>();
 builder.Services.AddScoped<ProductValueMapper>();
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseCors("ReactFrontend");
 
 app.MapControllers();
 

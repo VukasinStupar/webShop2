@@ -28,7 +28,7 @@ public class ProductService : IProductService
     public async Task<List<Product>> GetAllAsync()
     {
         List<Product> products = await _unitOfWork.Products.GetAllAsync();
-
+        Console.WriteLine("service Count: " + products.Count);
         return products.ToList();
     }
 

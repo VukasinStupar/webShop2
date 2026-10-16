@@ -12,3 +12,22 @@ obj/
 *.log
 
 appsettings.Development.json
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Backup files
+*.backup
+*.bak
+*.dump
+*.sql
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Local configuration
+appsettings.Local.json

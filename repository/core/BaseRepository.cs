@@ -22,10 +22,40 @@ public class BaseRepository<T> : IBaseRepository<T>
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    //public async Task<List<T>> GetAllAsync()
+    //{
+    //    List<T> entities = await _dbSet.ToListAsync();
+
+    //    Console.WriteLine("BaseRepository broj elemenata: " + entities.Count);
+
+    //    return entities;
+    //}
     public async Task<List<T>> GetAllAsync()
     {
-        return await _dbSet
-            .ToListAsync();
+        Console.WriteLine("========== BASE REPOSITORY ==========");
+        Console.WriteLine("Entity type: " + typeof(T).Name);
+
+        System.Data.Common.DbConnection connection =
+            _context.Database.GetDbConnection();
+
+        Console.WriteLine("Database: " + connection.Database);
+        Console.WriteLine("Data source: " + connection.DataSource);
+
+        Console.WriteLine("SQL koji EF Core izvršava:");
+        Console.WriteLine(_dbSet.ToQueryString());
+
+        List<T> entities = await _dbSet.ToListAsync();
+
+        Console.WriteLine("Broj dobijenih redova: " + entities.Count);
+
+        foreach (T entity in entities)
+        {
+            Console.WriteLine("Dobijen ID: " + entity.Id);
+        }
+
+        Console.WriteLine("======================================");
+
+        return entities;
     }
 
     public async Task AddAsync(T entity)
