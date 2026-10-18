@@ -3,7 +3,6 @@ using webShop2.dto.image;
 using webShop2.mapper;
 using webShop2.model;
 using webShop2.services.core;
-
 namespace webShop2.controllers;
 
 [ApiController]
@@ -28,17 +27,48 @@ public class ImageController : ControllerBase
     IFormFile file,
     [FromForm] bool isMain = false)
     {
-       
+        Console.WriteLine("UPLOAD DEBUG: usao u metodu");
+        Console.WriteLine($"ProductId: {productId}");
+        Console.WriteLine($"File postoji: {file != null}");
+        Console.WriteLine($"File size: {file?.Length ?? 0}");
+
         try
         {
-            Image? image = await _service.UploadAsync(productId, file, isMain);
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new
+                {
+                    message = "Nije poslata slika ili je fajl prazan."
+                });
+            }
+
+            Image? image = await _service.UploadAsync(
+                productId,
+                file,
+                isMain
+            );
+
+            Console.WriteLine(
+                $"UPLOAD SERVICE RESULT: {(image == null ? "null" : $"Image ID = {image.Id}")}"
+            );
 
             if (image == null)
             {
-                return NotFound(new { message = "Proizvod ne postoji." });
+                return NotFound(new
+                {
+                    message = "Proizvod ne postoji."
+                });
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = image.Id }, _mapper.ToDto(image));
+            ImageDto dto = _mapper.ToDto(image);
+
+            Console.WriteLine("UPLOAD MAPPER: uspešno mapiranje slike");
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = image.Id },
+                dto
+            );
         }
         catch (Exception ex)
         {
@@ -51,9 +81,8 @@ public class ImageController : ControllerBase
                 detail = ex.Message
             });
         }
-
     }
-
+    
     [HttpGet]
     public async Task<ActionResult<List<ImageDto>>> GetAll()
     {

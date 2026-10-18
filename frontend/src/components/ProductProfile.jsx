@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import { getMainImage, sortImages } from "../utils/images";
 import apiUrl from "../api";
@@ -5,17 +6,19 @@ import "./ProductProfile.css";
 
 const IMAGE_EXTENSIONS =
     /\.(jpe?g|jfif|png|gif|webp|bmp|tiff?|heic|heif|avif|svg)$/i;
-const MAX_SIZE = 10_000_000; // Cloudinary besplatni plan: najviše 10 MB po slici
 
-// DODATO: kontakt podaci na jednom mestu
+const MAX_SIZE = 10_000_000;
+
 const PHONE_DISPLAY = "064 136 0754";
 const PHONE_HREF = "tel:+381641360754";
 
 function isImageFile(file) {
-    return file.type.startsWith("image/") || IMAGE_EXTENSIONS.test(file.name);
+    return (
+        file.type.startsWith("image/") ||
+        IMAGE_EXTENSIONS.test(file.name)
+    );
 }
 
-// DODATO: telefon / tablet (ekran na dodir)
 function isTouchDevice() {
     return (
         window.matchMedia?.("(pointer: coarse)").matches ||
@@ -23,7 +26,34 @@ function isTouchDevice() {
     );
 }
 
-function ProductProfile({ product, onClose, onChanged, isAdmin = false }) {
+async function getErrorMessage(response) {
+    const responseText = await response.text();
+
+    if (!responseText) {
+        return `HTTP ${response.status}: ${response.statusText}`;
+    }
+
+    try {
+        const data = JSON.parse(responseText);
+
+        return (
+            data.detail ||
+            data.message ||
+            data.title ||
+            data.error ||
+            responseText
+        );
+    } catch {
+        return responseText;
+    }
+}
+
+function ProductProfile({
+    product,
+    onClose,
+    onChanged,
+    isAdmin = false
+}) {
     const images = sortImages(product);
 
     const [selectedId, setSelectedId] = useState(null);
@@ -31,164 +61,278 @@ function ProductProfile({ product, onClose, onChanged, isAdmin = false }) {
     const [progress, setProgress] = useState(null);
     const [message, setMessage] = useState("");
 
-    // DODATO
     const [showPhone, setShowPhone] = useState(false);
     const [copied, setCopied] = useState(false);
 
     const fileInputRef = useRef(null);
 
     const selected =
-        images.find((img) => img.id === selectedId) ?? getMainImage(product);
+        images.find((img) => img.id === selectedId) ??
+        getMainImage(product);
 
     useEffect(() => {
-        function onKeyDown(e) {
-            if (e.key === "Escape") onClose();
+        function handleKeyDown(event) {
+            if (event.key === "Escape") {
+                onClose();
+            }
         }
-        window.addEventListener("keydown", onKeyDown);
-        return () => window.removeEventListener("keydown", onKeyDown);
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
     }, [onClose]);
 
-    // DODATO: klik na dugme za poziv
     function handleCallClick() {
         if (isTouchDevice()) {
-            // telefon: odmah otvori biranje broja
             window.location.href = PHONE_HREF;
             return;
         }
 
-        // računar: prikaži broj sa opcijama
-        setShowPhone((prev) => !prev);
+        setShowPhone((previous) => !previous);
         setCopied(false);
     }
 
-    // DODATO: kopiranje broja
     async function handleCopyPhone() {
         try {
             await navigator.clipboard.writeText(PHONE_DISPLAY);
         } catch {
-            // rezervno rešenje ako clipboard nije dostupan
             const input = document.createElement("input");
+
             input.value = PHONE_DISPLAY;
             document.body.appendChild(input);
             input.select();
-            document.execCommand("copy");
+
+            const copiedSuccessfully =
+                document.execCommand("copy");
+
             document.body.removeChild(input);
+
+            if (!copiedSuccessfully) {
+                setMessage("Kopiranje broja nije uspelo.");
+                return;
+            }
         }
 
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
     }
+
+    useEffect(() => {
+        if (!copied) {
+            return undefined;
+        }
+
+        const timeoutId = window.setTimeout(() => {
+            setCopied(false);
+        }, 2000);
+
+        return () => {
+            window.clearTimeout(timeoutId);
+        };
+    }, [copied]);
 
     async function runAction(action) {
         try {
             setBusy(true);
             setMessage("");
+
             await action();
             await onChanged?.();
-        } catch (err) {
-            setMessage(err.message || "Akcija nije uspela.");
+        } catch (error) {
+            setMessage(
+                error.message || "Akcija nije uspela."
+            );
         } finally {
             setBusy(false);
         }
     }
 
     function handleSetMain() {
-        if (!selected) return;
-
-        runAction(async () => {
-            const res = await fetch(`${apiUrl}/api/image/${selected.id}/main`, {
-                method: "PUT"
-            });
-            if (!res.ok) throw new Error("Postavljanje profilne slike nije uspelo.");
-        });
-    }
-
-    function handleDelete() {
-        if (!selected) return;
-
-        if (!window.confirm("Da li sigurno želiš da obrišeš ovu sliku sa sajta?")) {
+        if (!selected) {
             return;
         }
 
         runAction(async () => {
-            const res = await fetch(`${apiUrl}/api/image/${selected.id}`, {
-                method: "DELETE"
-            });
-            if (!res.ok) throw new Error("Brisanje slike nije uspelo.");
+            const response = await fetch(
+                `${apiUrl}/api/image/${selected.id}/main`,
+                {
+                    method: "PUT"
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    `Postavljanje profilne slike nije uspelo: ${
+                        await getErrorMessage(response)
+                    }`
+                );
+            }
+        });
+    }
+
+    function handleDelete() {
+        if (!selected) {
+            return;
+        }
+
+        const confirmed = window.confirm(
+            "Da li sigurno želiš da obrišeš ovu sliku sa sajta?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        runAction(async () => {
+            const response = await fetch(
+                `${apiUrl}/api/image/${selected.id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    `Brisanje slike nije uspelo: ${
+                        await getErrorMessage(response)
+                    }`
+                );
+            }
+
             setSelectedId(null);
         });
     }
 
-    // Upload više slika odjednom: šalje se jedna po jedna, redom
-    async function handleUpload(e) {
-        const files = Array.from(e.target.files ?? []);
-        e.target.value = "";
+    async function handleUpload(event) {
+        const files = Array.from(event.target.files ?? []);
 
-        if (files.length === 0) return;
+        event.target.value = "";
+
+        if (files.length === 0) {
+            return;
+        }
+
+        const invalidFiles = files
+            .filter(
+                (file) =>
+                    !isImageFile(file) ||
+                    file.size > MAX_SIZE
+            )
+            .map((file) => {
+                if (!isImageFile(file)) {
+                    return `${file.name} (nije slika)`;
+                }
+
+                return `${file.name} (veće od 10 MB)`;
+            });
+
+        const validFiles = files.filter(
+            (file) =>
+                isImageFile(file) &&
+                file.size <= MAX_SIZE
+        );
 
         setBusy(true);
         setMessage("");
-
-        const failed = [];
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            setProgress({ current: i + 1, total: files.length });
-
-            if (!isImageFile(file)) {
-                failed.push(`${file.name} (nije slika)`);
-                continue;
-            }
-
-            if (file.size > MAX_SIZE) {
-                failed.push(`${file.name} (veće od 10 MB)`);
-                continue;
-            }
-
-            try {
-                const formData = new FormData();
-                formData.append("file", file);
-                formData.append("isMain", false);
-
-                const res = await fetch(
-                    `${apiUrl}/api/image/upload/${product.id}`,
-                    { method: "POST", body: formData }
-                );
-
-                if (!res.ok) {
-                    failed.push(file.name);
-                }
-            } catch {
-                failed.push(file.name);
-            }
-        }
-
         setProgress(null);
 
-        // lista se osvežava jednom, kad se sve pošalje
-        await onChanged?.();
-        setBusy(false);
+        try {
+            const failedUploads = await validFiles.reduce(
+                async (previousPromise, file, index) => {
+                    const previousFailures =
+                        await previousPromise;
 
-        if (failed.length > 0) {
-            setMessage(
-                `Nije uspelo ${failed.length} od ${files.length}: ${failed.join(", ")}`
+                    setProgress({
+                        current: index + 1,
+                        total: validFiles.length
+                    });
+
+                    try {
+                        const formData = new FormData();
+
+                        formData.append("file", file);
+                        formData.append("isMain", "false");
+
+                        const response = await fetch(
+                            `${apiUrl}/api/image/upload/${product.id}`,
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+                        if (!response.ok) {
+                            const errorMessage =
+                                await getErrorMessage(response);
+
+                            return [
+                                ...previousFailures,
+                                `${file.name} (HTTP ${response.status}: ${errorMessage})`
+                            ];
+                        }
+
+                        return previousFailures;
+                    } catch (error) {
+                        return [
+                            ...previousFailures,
+                            `${file.name} (${
+                                error.message ||
+                                "Greška u mreži"
+                            })`
+                        ];
+                    }
+                },
+                Promise.resolve([])
             );
+
+            const allFailures = [
+                ...invalidFiles,
+                ...failedUploads
+            ];
+
+            if (failedUploads.length < validFiles.length) {
+                await onChanged?.();
+            }
+
+            if (allFailures.length > 0) {
+                setMessage(
+                    `Nije uspelo ${allFailures.length} od ${files.length}: ` +
+                    allFailures.join(", ")
+                );
+            } else {
+                setMessage(
+                    `Uspešno je poslato ${files.length} ${
+                        files.length === 1 ? "slika" : "slika"
+                    }.`
+                );
+            }
+        } catch (error) {
+            setMessage(
+                error.message ||
+                "Došlo je do greške prilikom slanja slika."
+            );
+        } finally {
+            setProgress(null);
+            setBusy(false);
         }
     }
 
     return (
-        <div className="product-profile__backdrop" onClick={onClose}>
+        <div
+            className="product-profile__backdrop"
+            onClick={onClose}
+        >
             <div
                 className="product-profile"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(event) => event.stopPropagation()}
             >
                 <button
+                    type="button"
                     className="product-profile__close"
                     onClick={onClose}
                     aria-label="Zatvori"
-                >
-                    ×
-                </button>
+                />
 
                 <div className="product-profile__gallery">
                     {selected ? (
@@ -211,7 +355,6 @@ function ProductProfile({ product, onClose, onChanged, isAdmin = false }) {
                         </div>
                     )}
 
-                    {/* DUGMAD ZA IZABRANU SLIKU */}
                     {isAdmin && selected && (
                         <div className="product-profile__actions">
                             <button
@@ -244,14 +387,18 @@ function ProductProfile({ product, onClose, onChanged, isAdmin = false }) {
                                 >
                                     <img
                                         src={img.url}
-                                        alt=""
+                                        alt={`${product.name} - slika`}
                                         className={
                                             "product-profile__thumb" +
-                                            (selected?.id === img.id
-                                                ? " product-profile__thumb--active"
-                                                : "")
+                                            (
+                                                selected?.id === img.id
+                                                    ? " product-profile__thumb--active"
+                                                    : ""
+                                            )
                                         }
-                                        onClick={() => setSelectedId(img.id)}
+                                        onClick={() =>
+                                            setSelectedId(img.id)
+                                        }
                                     />
 
                                     {img.isMain && (
@@ -278,19 +425,27 @@ function ProductProfile({ product, onClose, onChanged, isAdmin = false }) {
                             <button
                                 type="button"
                                 disabled={busy}
-                                onClick={() => fileInputRef.current?.click()}
+                                onClick={() =>
+                                    fileInputRef.current?.click()
+                                }
                             >
                                 {progress
                                     ? `Slanje ${progress.current}/${progress.total}...`
                                     : busy
-                                    ? "Sačekaj..."
-                                    : "+ Dodaj slike"}
+                                        ? "Sačekaj..."
+                                        : "+ Dodaj slike"}
                             </button>
                         </div>
                     )}
 
                     {message && (
-                        <p className="product-profile__error">{message}</p>
+                        <p
+                            className="product-profile__error"
+                            role="status"
+                            aria-live="polite"
+                        >
+                            {message}
+                        </p>
                     )}
                 </div>
 
@@ -300,24 +455,31 @@ function ProductProfile({ product, onClose, onChanged, isAdmin = false }) {
                     <p className="product-profile__price">
                         {product.price == null
                             ? "Cena nije navedena"
-                            : `${Number(product.price).toLocaleString("sr-RS")} RSD`}
+                            : `${Number(
+                                product.price
+                            ).toLocaleString("sr-RS")} RSD`}
                     </p>
 
                     <p>{product.description}</p>
 
-                    <p>Dostupna količina: {product.quantity}</p>
+                    <p>
+                        Dostupna količina: {product.quantity}
+                    </p>
+
                     <p>Status: {product.status}</p>
 
                     <div className="product-profile__contact">
                         <h3>Kontakt</h3>
+
                         <p>
-                            <strong>Ime i prezime:</strong> Dušan Kukić
+                            <strong>Ime i prezime:</strong>{" "}
+                            Dušan Kukić
                         </p>
+
                         <p>
                             <strong>Firma:</strong> Duka Shop
                         </p>
 
-                        {/* IZMENJENO: dugme umesto običnog linka */}
                         <button
                             type="button"
                             className="product-profile__call"
@@ -326,7 +488,6 @@ function ProductProfile({ product, onClose, onChanged, isAdmin = false }) {
                             Pozovite: {PHONE_DISPLAY}
                         </button>
 
-                        {/* DODATO: okvir za računar */}
                         {showPhone && (
                             <div className="product-profile__phone-box">
                                 <span className="product-profile__phone-number">
@@ -334,20 +495,24 @@ function ProductProfile({ product, onClose, onChanged, isAdmin = false }) {
                                 </span>
 
                                 <div className="product-profile__phone-actions">
-                                    <a href={PHONE_HREF}>Pozovi</a>
+                                    <a href={PHONE_HREF}>
+                                        Pozovi
+                                    </a>
 
                                     <button
                                         type="button"
                                         onClick={handleCopyPhone}
                                     >
-                                        {copied ? "Kopirano ✓" : "Kopiraj broj"}
+                                        {copied
+                                            ? "Kopirano ✓"
+                                            : "Kopiraj broj"}
                                     </button>
                                 </div>
 
                                 <small>
-                                    Na računaru pozivi rade samo ako imate
-                                    program za pozive. Na telefonu se broj
-                                    bira odmah.
+                                    Na računaru pozivi rade samo ako
+                                    imate program za pozive. Na
+                                    telefonu se broj bira odmah.
                                 </small>
                             </div>
                         )}
