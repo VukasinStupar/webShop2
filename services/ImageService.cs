@@ -1,6 +1,4 @@
-﻿
-
-using webShop2.dto.image;
+﻿using webShop2.dto.image;
 using webShop2.Infrastructure.Storage;
 using webShop2.mapper;
 using webShop2.model;
