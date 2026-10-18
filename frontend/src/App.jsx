@@ -42,7 +42,7 @@ function App() {
         async function getProducts() {
 
             // probamo više mogućih naziva endpointa
-            const endpoints = ["/api/Product", "/api/Products"];
+            const endpoints = ["/api/Products", "/api/Product"];
 
             for (const endpoint of endpoints) {
                 try {
