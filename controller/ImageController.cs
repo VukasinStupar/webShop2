@@ -42,9 +42,16 @@ public class ImageController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("UPLOAD GRESKA: " + ex);
-            return StatusCode(500, new { message = ex.Message });
+            Console.WriteLine("UPLOAD GRESKA:");
+            Console.WriteLine(ex.ToString());
+
+            return StatusCode(500, new
+            {
+                message = "Greška prilikom uploada slike.",
+                detail = ex.Message
+            });
         }
+
     }
 
     [HttpGet]
