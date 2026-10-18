@@ -1,6 +1,8 @@
 ﻿using webShop2.dto.image;
 using webShop2.model;
 
+using Microsoft.AspNetCore.Http;
+
 namespace webShop2.services.core;
 
 public interface IImageService
@@ -13,4 +15,9 @@ public interface IImageService
     Task<Image> CreateAsync(Image image);
     Task<Image?> UpdateAsync(Image image);
     Task<bool> DeleteAsync(int id);
+
+    Task<Image?> UploadAsync(int productId, IFormFile file, bool isMain);
+
+    Task<Image?> SetMainAsync(int id);
+
 }

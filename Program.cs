@@ -6,6 +6,7 @@ using webShop2.services;
 using webShop2.services.core;
 using webShop2.mapper;
 using webShop2.middleware;
+using webShop2.Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 string connectionString =
@@ -50,6 +51,9 @@ builder.Services.AddScoped<PaymentMapper>();
 builder.Services.AddScoped<ProductAttributeMapper>();
 builder.Services.AddScoped<ProductValueMapper>();
 
+builder.Services.Configure<CloudinarySettings>(
+    builder.Configuration.GetSection("Cloudinary"));
+builder.Services.AddScoped<IImageStorageService, CloudinaryImageStorageService>();
 
 builder.Services.AddCors(options =>
 {
@@ -64,7 +68,12 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
 builder.Services.AddControllers();
+
+builder.Services.Configure<CloudinarySettings>(
+    builder.Configuration.GetSection("Cloudinary"));
+builder.Services.AddScoped<IImageStorageService, CloudinaryImageStorageService>();
 
 var app = builder.Build();
 

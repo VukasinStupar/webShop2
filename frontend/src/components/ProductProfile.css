@@ -1,0 +1,451 @@
+/* ========================================
+   PROFIL PROIZVODA — DARK PREMIUM
+======================================== */
+
+.product-profile__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 16px;
+
+    background: rgba(3, 8, 18, 0.78);
+    backdrop-filter: blur(4px);
+}
+
+.product-profile {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 28px;
+
+    width: 100%;
+    max-width: 980px;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 28px;
+
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 18px;
+
+    background: linear-gradient(
+        155deg,
+        rgba(22, 34, 54, 0.99),
+        rgba(12, 20, 34, 0.99)
+    );
+
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.product-profile::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+
+    height: 3px;
+    border-radius: 18px 18px 0 0;
+
+    background: linear-gradient(90deg, #38bdf8, #2dd4bf, #818cf8);
+
+    content: "";
+}
+
+.product-profile__close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 10px;
+
+    background: rgba(15, 23, 38, 0.9);
+    color: #cbd5e1;
+
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+
+    transition:
+        color 200ms ease,
+        border-color 200ms ease;
+}
+
+.product-profile__close:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+    color: #67e8f9;
+}
+
+/* Galerija */
+
+.product-profile__gallery {
+    min-width: 0;
+}
+
+.product-profile__main-image,
+.product-profile__no-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    border: 1px solid rgba(148, 163, 184, 0.17);
+    border-radius: 14px;
+
+    background: rgba(8, 14, 26, 0.9);
+}
+
+.product-profile__main-image {
+    object-fit: contain;
+}
+
+.product-profile__no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #8292aa;
+    font-size: 13px;
+}
+
+.product-profile__thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    margin-top: 10px;
+}
+
+.product-profile__thumb {
+    width: 64px;
+    height: 64px;
+
+    border: 2px solid rgba(148, 163, 184, 0.17);
+    border-radius: 9px;
+
+    background: rgba(8, 14, 26, 0.9);
+    object-fit: cover;
+    cursor: pointer;
+
+    transition:
+        border-color 200ms ease,
+        transform 200ms ease;
+}
+
+.product-profile__thumb:hover {
+    border-color: rgba(56, 189, 248, 0.5);
+    transform: translateY(-2px);
+}
+
+.product-profile__thumb--active {
+    border-color: #38bdf8;
+}
+
+/* Informacije */
+
+.product-profile__info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-profile__info h2 {
+    margin: 0;
+    padding-right: 36px;
+
+    color: #f1f7ff;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.4px;
+
+    overflow-wrap: anywhere;
+}
+
+.product-profile__info p {
+    margin: 0;
+
+    color: #a0b0c7;
+    font-size: 14px;
+    line-height: 1.7;
+
+    overflow-wrap: anywhere;
+}
+
+.product-profile__info .product-profile__price {
+    color: #67e8f9;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Kontakt */
+
+.product-profile__contact {
+    margin-top: 12px;
+    padding-top: 16px;
+
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.product-profile__contact h3 {
+    margin: 0 0 8px;
+
+    color: #e2ecfa;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.product-profile__contact p strong {
+    color: #e2ecfa;
+    font-weight: 700;
+}
+
+.product-profile__call {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 12px;
+    padding: 11px 18px;
+
+    border-radius: 10px;
+
+    background: linear-gradient(90deg, #0ea5e9, #2dd4bf);
+    color: #04121f;
+
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+
+    box-shadow: 0 6px 18px rgba(14, 165, 233, 0.22);
+
+    transition:
+        transform 200ms ease,
+        box-shadow 200ms ease;
+}
+
+.product-profile__call:hover {
+    box-shadow: 0 10px 24px rgba(14, 165, 233, 0.32);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 760px) {
+    .product-profile {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .product-profile__info h2 {
+        font-size: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .product-profile__close,
+    .product-profile__thumb,
+    .product-profile__call {
+        transition: none;
+    }
+
+    .product-profile__thumb:hover,
+    .product-profile__call:hover {
+        transform: none;
+    }
+}
+
+/* ========================================
+   UPRAVLJANJE SLIKAMA
+======================================== */
+
+.product-profile__image-wrap {
+    position: relative;
+}
+
+.product-profile__badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+
+    padding: 4px 10px;
+
+    border-radius: 8px;
+
+    background: linear-gradient(90deg, #0ea5e9, #2dd4bf);
+    color: #04121f;
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.product-profile__badge--small {
+    top: 4px;
+    left: 4px;
+
+    padding: 2px 6px;
+    border-radius: 6px;
+
+    font-size: 9px;
+}
+
+.product-profile__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    margin-top: 12px;
+}
+
+.product-profile__actions button,
+.product-profile__upload button {
+    flex: 1 1 auto;
+
+    padding: 10px 14px;
+
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 9px;
+
+    background: rgba(14, 165, 233, 0.12);
+    color: #67e8f9;
+
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+
+    transition:
+        background-color 200ms ease,
+        border-color 200ms ease;
+}
+
+.product-profile__actions button:hover:not(:disabled),
+.product-profile__upload button:hover:not(:disabled) {
+    border-color: rgba(56, 189, 248, 0.6);
+    background: rgba(14, 165, 233, 0.22);
+}
+
+.product-profile__actions .product-profile__danger {
+    border-color: rgba(251, 113, 133, 0.3);
+    background: rgba(251, 113, 133, 0.1);
+    color: #fda4af;
+}
+
+.product-profile__actions .product-profile__danger:hover:not(:disabled) {
+    border-color: rgba(251, 113, 133, 0.6);
+    background: rgba(251, 113, 133, 0.2);
+}
+
+.product-profile__actions button:disabled,
+.product-profile__upload button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.product-profile__thumb-item {
+    position: relative;
+}
+
+.product-profile__upload {
+    display: flex;
+    margin-top: 10px;
+}
+
+.product-profile__error {
+    margin: 8px 0 0;
+    color: #fda4af;
+    font-size: 12px;
+}
+
+/* ========================================
+   POZIV TELEFONOM
+======================================== */
+
+button.product-profile__call {
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.product-profile__phone-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin-top: 12px;
+    padding: 14px;
+
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 12px;
+
+    background: rgba(14, 165, 233, 0.08);
+}
+
+.product-profile__phone-number {
+    color: #67e8f9;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    font-variant-numeric: tabular-nums;
+    user-select: all;
+}
+
+.product-profile__phone-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.product-profile__phone-actions a,
+.product-profile__phone-actions button {
+    flex: 1 1 auto;
+
+    padding: 9px 14px;
+
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 9px;
+
+    background: rgba(14, 165, 233, 0.12);
+    color: #67e8f9;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+
+    transition:
+        background-color 200ms ease,
+        border-color 200ms ease;
+}
+
+.product-profile__phone-actions a:hover,
+.product-profile__phone-actions button:hover {
+    border-color: rgba(56, 189, 248, 0.6);
+    background: rgba(14, 165, 233, 0.22);
+}
+
+.product-profile__phone-box small {
+    color: #8292aa;
+    font-size: 11px;
+    line-height: 1.5;
+}

@@ -58,13 +58,21 @@ public class ProductController : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult<ProductDto>> Create(
-        CreateProductDto dto)
+    CreateProductDto dto)
     {
         Product productCreate =
             _mapper.ToEntity(dto);
 
-        Product product =
+        Product? product =
             await _service.CreateAsync(productCreate);
+
+        if (product == null)
+        {
+            return BadRequest(new
+            {
+                message = "Izabrana kategorija ne postoji."
+            });
+        }
 
         ProductDto productDto =
             _mapper.ToDto(product);
@@ -74,6 +82,7 @@ public class ProductController : ControllerBase
             new { id = productDto.Id },
             productDto);
     }
+
 
     [HttpPut("{id}")]
     public async Task<ActionResult<ProductDto>> Update(

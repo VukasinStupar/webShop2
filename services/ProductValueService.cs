@@ -56,7 +56,7 @@ public class ProductValueService : IProductValueService
         return values.ToList();
     }
 
-    public async Task<ProductValue> CreateAsync(
+    public async Task<ProductValue?> CreateAsync(
         ProductValue createProductValue)
     {
         await _unitOfWork.ProductValues.AddAsync(createProductValue);

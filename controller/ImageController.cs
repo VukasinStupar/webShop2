@@ -21,6 +21,32 @@ public class ImageController : ControllerBase
         _mapper = mapper;
     }
 
+    [HttpPost("upload/{productId}")]
+    [RequestSizeLimit(10_000_000)]
+    public async Task<ActionResult<ImageDto>> Upload(
+    int productId,
+    IFormFile file,
+    [FromForm] bool isMain = false)
+    {
+       
+        try
+        {
+            Image? image = await _service.UploadAsync(productId, file, isMain);
+
+            if (image == null)
+            {
+                return NotFound(new { message = "Proizvod ne postoji." });
+            }
+
+            return CreatedAtAction(nameof(GetById), new { id = image.Id }, _mapper.ToDto(image));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("UPLOAD GRESKA: " + ex);
+            return StatusCode(500, new { message = ex.Message });
+        }
+    }
+
     [HttpGet]
     public async Task<ActionResult<List<ImageDto>>> GetAll()
     {
@@ -150,5 +176,18 @@ public class ImageController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [HttpPut("{id}/main")]
+    public async Task<ActionResult<ImageDto>> SetMain(int id)
+    {
+        Image? image = await _service.SetMainAsync(id);
+
+        if (image == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(_mapper.ToDto(image));
     }
 }

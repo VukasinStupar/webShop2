@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace webShop2.dto.ProductDto;
+namespace webShop2.dto.productDto;
 
 public class CreateProductDto
 {
@@ -20,4 +20,6 @@ public class CreateProductDto
 
     [Range(1, int.MaxValue)]
     public int CategoryId { get; set; }
+
+
 }

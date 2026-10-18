@@ -1,11 +1,15 @@
-﻿using webShop2.dto.productDto;
+﻿using webShop2.dto.image;
+using webShop2.dto.productDto;
 using webShop2.dto.ProductDto;
 using webShop2.model;
 
 namespace webShop2.mapper;
 
+
 public class ProductMapper
 {
+    private readonly ImageMapper _imageMapper = new ImageMapper();
+
     public ProductDto ToDto(Product product)
     {
         return new ProductDto
@@ -16,10 +20,11 @@ public class ProductMapper
             Price = product.Price,
             Quantity = product.Quantity,
             Status = product.Status,
-            CategoryId = product.CategoryId
+            CategoryId = product.CategoryId,
+            Images = product.Images.Select(i => _imageMapper.ToDto(i)).ToList()
         };
-
     }
+
     public Product ToEntity(CreateProductDto dto)
     {
         return new Product
@@ -41,6 +46,4 @@ public class ProductMapper
         product.Status = dto.Status;
         product.CategoryId = dto.CategoryId;
     }
-
-
 }

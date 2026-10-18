@@ -1,30 +1,34 @@
-﻿   
-using System.Timers;
+﻿using System.Timers;
 using Moq;
 using Xunit;
+using webShop2.Infrastructure.Storage;
 using webShop2.model;
 using webShop2.repository.core;
 using webShop2.services;
 
 namespace webShop2.Tests;
 
-    public class ImageServiceTests
+public class ImageServiceTests
+{
+    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+    private readonly Mock<IImageRepository> _imageRepositoryMock;
+    private readonly Mock<IImageStorageService> _storageMock;
+    private readonly ImageService _service;
+
+    public ImageServiceTests()
     {
-        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-        private readonly Mock<IImageRepository> _imageRepositoryMock;
-        private readonly ImageService _service;
+        _unitOfWorkMock = new Mock<IUnitOfWork>();
+        _imageRepositoryMock = new Mock<IImageRepository>();
+        _storageMock = new Mock<IImageStorageService>();
 
-        public ImageServiceTests()
-        {
-            _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _imageRepositoryMock = new Mock<IImageRepository>();
+        _unitOfWorkMock
+            .Setup(x => x.Images)
+            .Returns(_imageRepositoryMock.Object);
 
-            _unitOfWorkMock
-                .Setup(x => x.Images)
-                .Returns(_imageRepositoryMock.Object);
-
-            _service = new ImageService(_unitOfWorkMock.Object);
-        }
+        _service = new ImageService(
+            _unitOfWorkMock.Object,
+            _storageMock.Object);
+    }
 
     [Fact]
         public async Task GetByIdAsync_ReturnsImage_WhenImageExists()

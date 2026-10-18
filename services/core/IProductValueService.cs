@@ -10,7 +10,7 @@ public interface IProductValueService
     Task<List<ProductValue>> GetByProductAsync(int productId);
     Task<List<ProductValue>> GetByAttributeAsync(int productAttributeId);
 
-    Task<ProductValue> CreateAsync(ProductValue productValue);
+    Task<ProductValue?> CreateAsync(ProductValue productValue);
     Task<ProductValue?> UpdateAsync(
         int id,
         ProductValue productValue);

@@ -9,5 +9,12 @@ namespace webShop2.repository.core
         Task<List<Product>> GetActiveProductsAsync();
 
         Task<List<Product>> SearchByNameAsync(string name);
+
+        Task<Product?> GetByIdWithImagesAsync(int id);
+
+        Task<List<Product>> GetAllWithImagesAsync();
+
+
+       
     }
 }

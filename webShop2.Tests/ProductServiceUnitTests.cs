@@ -130,7 +130,7 @@ public class ProductServiceUnitTests
             .Setup(x => x.SaveChangesAsync())
             .ReturnsAsync(1);
 
-        Product result =
+        Product? result =
             await _service.CreateAsync(product);
 
         Assert.Equal(product, result);

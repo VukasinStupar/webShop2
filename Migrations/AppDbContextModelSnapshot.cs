@@ -77,6 +77,11 @@ namespace webShop2.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
 
@@ -472,11 +477,13 @@ namespace webShop2.Migrations
 
             modelBuilder.Entity("webShop2.model.Image", b =>
                 {
-                    b.HasOne("webShop2.model.Product", null)
-                        .WithMany()
+                    b.HasOne("webShop2.model.Product", "Product")
+                        .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("webShop2.model.Item", b =>
@@ -534,6 +541,11 @@ namespace webShop2.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("webShop2.model.Product", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

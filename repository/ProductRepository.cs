@@ -32,5 +32,20 @@ namespace webShop2.repository
                 .Where(x => x.Name.ToLower().Contains(name.ToLower()))
                 .ToListAsync();
         }
+
+       
+        public async Task<Product?> GetByIdWithImagesAsync(int id)
+        {
+            return await _dbSet
+                .Include(x => x.Images.OrderBy(i => i.SortOrder))
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<List<Product>> GetAllWithImagesAsync()
+        {
+            return await _dbSet
+                .Include(x => x.Images.OrderBy(i => i.SortOrder))
+                .ToListAsync();
+        }
     }
 }

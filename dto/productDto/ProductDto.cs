@@ -1,4 +1,6 @@
-﻿namespace webShop2.dto.productDto
+﻿using webShop2.dto.image;
+
+namespace webShop2.dto.productDto
 {
     public class ProductDto
     {
@@ -9,5 +11,7 @@
         public int Quantity { get; set; }
         public string Status { get; set; } = string.Empty;
         public int CategoryId { get; set; }
+
+        public List<ImageDto> Images { get; set; } = new();
     }
 }

@@ -17,5 +17,7 @@ namespace webShop2.model
         public string Status { get; set; } = "Active";
 
         public int CategoryId { get; set; }
+
+        public List<Image> Images { get; set; } = new();
     }
 }

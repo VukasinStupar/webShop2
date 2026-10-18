@@ -36,11 +36,11 @@ public class AppDbContext : DbContext
             .HasForeignKey(x => x.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Image>()
-            .HasOne<Product>()
-            .WithMany()
-            .HasForeignKey(x => x.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
+        //modelBuilder.Entity<Image>()
+        //    .HasOne<Product>()
+        //    .WithMany()
+        //    .HasForeignKey(x => x.ProductId)
+        //    .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Item>()
             .HasOne<Order>()
@@ -84,7 +84,11 @@ public class AppDbContext : DbContext
             .HasForeignKey(x => x.ParentId)
             .OnDelete(DeleteBehavior.Restrict);
 
-
+        modelBuilder.Entity<Image>()
+            .HasOne(i => i.Product)
+            .WithMany(p => p.Images)
+            .HasForeignKey(i => i.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
 
@@ -156,6 +160,9 @@ public class AppDbContext : DbContext
             .HasMaxLength(200)
             .IsRequired();
 
+        modelBuilder.Entity<Image>()
+            .Property(x => x.PublicId)
+            .HasMaxLength(500);
 
         modelBuilder.Entity<Image>()
             .Property(x => x.Url)
@@ -237,5 +244,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ProductValue>()
             .Property(x => x.Text)
             .HasMaxLength(1000);
+
+
     }
 }

@@ -15,7 +15,9 @@ public class ProductService : IProductService
 
     public async Task<Product?> GetByIdAsync(int id)
     {
-        Product? product = await _unitOfWork.Products.GetByIdAsync(id);
+        //Product? product = await _unitOfWork.Products.GetByIdAsync(id);
+        Product? product = await _unitOfWork.Products.GetByIdWithImagesAsync(id);
+
 
         if (product == null)
         {
@@ -27,18 +29,36 @@ public class ProductService : IProductService
 
     public async Task<List<Product>> GetAllAsync()
     {
-        List<Product> products = await _unitOfWork.Products.GetAllAsync();
+        //List<Product> products = await _unitOfWork.Products.GetAllAsync();
+        List<Product> products = await _unitOfWork.Products.GetAllWithImagesAsync();
+
         Console.WriteLine("service Count: " + products.Count);
         return products.ToList();
     }
+    //public async Task<Product?> GetByIdAsync(int id)
+    //{
+    //    return await _unitOfWork.Products.GetByIdWithImagesAsync(id);
+    //}
 
-    public async Task<Product> CreateAsync(Product createProduct)
+    //public async Task<List<Product>> GetAllAsync()
+    //{
+    //    return await _unitOfWork.Products.GetAllWithImagesAsync();
+    //}
+
+    public async Task<Product?> CreateAsync(Product product)
     {
+        
+        Category? category = await _unitOfWork.Categories.GetByIdAsync(product.CategoryId);
 
-        await _unitOfWork.Products.AddAsync(createProduct);
+        if (category == null)
+        {
+            return null;
+        }
+
+        await _unitOfWork.Products.AddAsync(product);
         await _unitOfWork.SaveChangesAsync();
 
-        return createProduct;
+        return product;
     }
 
     public async Task<Product?> UpdateAsync(
@@ -78,4 +98,7 @@ public class ProductService : IProductService
 
         return true;
     }
+
+  
 }
+
