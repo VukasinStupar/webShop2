@@ -87,6 +87,9 @@ public class CategoryController : ControllerBase
         {
             CategoryDto dto = _mapper.ToDto(category);
             categoriesDto.Add(dto);
+
+
+
         }
 
         return Ok(categoriesDto);
