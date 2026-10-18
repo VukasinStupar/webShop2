@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿
+using Moq;
 using Xunit;
 using webShop2.model;
 using webShop2.repository.core;
@@ -41,7 +42,7 @@ public class ProductServiceUnitTests
         };
 
         _productRepositoryMock
-            .Setup(x => x.GetByIdAsync(1))
+            .Setup(x => x.GetByIdWithImagesAsync(1))
             .ReturnsAsync(product);
 
         Product? result =
@@ -51,7 +52,7 @@ public class ProductServiceUnitTests
         Assert.Equal(product, result);
 
         _productRepositoryMock.Verify(
-            x => x.GetByIdAsync(1),
+            x => x.GetByIdWithImagesAsync(1),
             Times.Once);
     }
 
@@ -59,7 +60,7 @@ public class ProductServiceUnitTests
     public async Task GetByIdAsync_ReturnsNull_WhenProductDoesNotExist()
     {
         _productRepositoryMock
-            .Setup(x => x.GetByIdAsync(1))
+            .Setup(x => x.GetByIdWithImagesAsync(1))
             .ReturnsAsync((Product?)null);
 
         Product? result =
@@ -68,7 +69,7 @@ public class ProductServiceUnitTests
         Assert.Null(result);
 
         _productRepositoryMock.Verify(
-            x => x.GetByIdAsync(1),
+            x => x.GetByIdWithImagesAsync(1),
             Times.Once);
     }
 
@@ -96,7 +97,7 @@ public class ProductServiceUnitTests
         ];
 
         _productRepositoryMock
-            .Setup(x => x.GetAllAsync())
+            .Setup(x => x.GetAllWithImagesAsync())
             .ReturnsAsync(products);
 
         List<Product> result =
@@ -106,7 +107,7 @@ public class ProductServiceUnitTests
         Assert.Equal(products, result);
 
         _productRepositoryMock.Verify(
-            x => x.GetAllAsync(),
+            x => x.GetAllWithImagesAsync(),
             Times.Once);
     }
 
@@ -121,6 +122,20 @@ public class ProductServiceUnitTests
             Price = 1200,
             CategoryId = 10
         };
+
+        Mock<ICategoryRepository> categoryRepositoryMock =
+            new Mock<ICategoryRepository>();
+
+        categoryRepositoryMock
+            .Setup(x => x.GetByIdAsync(10))
+            .ReturnsAsync(new Category
+            {
+                Id = 10
+            });
+
+        _unitOfWorkMock
+            .Setup(x => x.Categories)
+            .Returns(categoryRepositoryMock.Object);
 
         _productRepositoryMock
             .Setup(x => x.AddAsync(product))
