@@ -1,25 +1,61 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+name: WebShop2 CI/CD
 
-WORKDIR /src
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-COPY . .
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
 
-RUN dotnet restore "webShop2.csproj"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-RUN dotnet publish "webShop2.csproj" \
-    -c Release \
-    -o /app/publish \
-    --no-restore
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
 
+      - name: Restore dependencies
+        run: dotnet restore webShop2.csproj
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+      - name: Build application
+        run: dotnet build webShop2.csproj -c Release --no-restore
 
-WORKDIR /app
+  test:
+    name: Testing
+    runs-on: ubuntu-latest
+    needs: build
 
-COPY --from=build /app/publish .
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-EXPOSE 8080
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
 
-ENTRYPOINT ["dotnet", "webShop2.dll"]
+      - name: Restore dependencies
+        run: dotnet restore webShop2.csproj
+
+      - name: Run tests
+        run: dotnet test -c Release --no-restore
+
+  docker:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t webshop2:${{ github.sha }} .
 
 
