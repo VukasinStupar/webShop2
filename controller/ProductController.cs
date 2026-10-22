@@ -5,6 +5,7 @@ using webShop2.mapper;
 using webShop2.model;
 using webShop2.services.core;
 
+
 namespace webShop2.controllers;
 
 [ApiController]
@@ -13,6 +14,7 @@ public class ProductController : ControllerBase
 {
     private readonly IProductService _service;
     private readonly ProductMapper _mapper;
+
 
     public ProductController(
         IProductService service,
@@ -56,33 +58,46 @@ public class ProductController : ControllerBase
         return Ok(dto);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<ProductDto>> Create(
-    CreateProductDto dto)
-    {
-        Product productCreate =
-            _mapper.ToEntity(dto);
 
-        Product? product =
-            await _service.CreateAsync(productCreate);
+    [HttpPost]
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(30_000_000)]
+    public async Task<ActionResult<ProductDto>> Create(
+     [FromForm] CreateProductDto dto)
+    {
+        Product productCreate = _mapper.ToEntity(dto);
+
+        Product? product;
+
+        try
+        {
+            product = await _service.CreateAsync(
+                productCreate,
+                dto.Images);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
 
         if (product == null)
         {
             return BadRequest(new
             {
-                message = "Izabrana kategorija ne postoji."
+                message = "Proizvod nije kreiran. Proveri da li kategorija postoji."
             });
         }
 
-        ProductDto productDto =
-            _mapper.ToDto(product);
+        ProductDto productDto = _mapper.ToDto(product);
 
         return CreatedAtAction(
             nameof(GetById),
-            new { id = productDto.Id },
+            new { id = product.Id },
             productDto);
     }
-
 
     [HttpPut("{id}")]
     public async Task<ActionResult<ProductDto>> Update(

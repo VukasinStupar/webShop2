@@ -14,25 +14,7 @@ public class CloudinaryImageStorageService : IImageStorageService
         _cloudinary.Api.Secure = true;
     }
 
-    //public async Task<StoredImage> UploadAsync(IFormFile file, string folder)
-    //{
-    //    await using Stream stream = file.OpenReadStream();
-
-    //    ImageUploadParams uploadParams = new ImageUploadParams
-    //    {
-    //        File = new FileDescription(file.FileName, stream),
-    //        Folder = folder
-    //    };
-
-    //    ImageUploadResult result = await _cloudinary.UploadAsync(uploadParams);
-
-    //    if (result.Error != null)
-    //    {
-    //        throw new InvalidOperationException(result.Error.Message);
-    //    }
-
-    //    return new StoredImage(result.SecureUrl.ToString(), result.PublicId);
-    //}
+ 
     public async Task<StoredImage> UploadAsync(IFormFile file, string folder)
     {
         try

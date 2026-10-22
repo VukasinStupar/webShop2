@@ -9,6 +9,7 @@ using webShop2.middleware;
 using webShop2.Infrastructure.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
+
 string connectionString =
     Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
     ?? builder.Configuration.GetConnectionString("DefaultConnection")

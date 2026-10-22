@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace webShop2.dto.productDto;
 
@@ -21,5 +22,5 @@ public class CreateProductDto
     [Range(1, int.MaxValue)]
     public int CategoryId { get; set; }
 
-
+    public List<IFormFile> Images { get; set; } = new();
 }

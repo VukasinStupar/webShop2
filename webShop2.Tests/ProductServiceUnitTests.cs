@@ -1,9 +1,12 @@
-﻿
+﻿using Microsoft.AspNetCore.Http;
 using Moq;
-using Xunit;
+using System.IO;
+using System.Collections.Generic;
+using webShop2.Infrastructure.Storage;
 using webShop2.model;
 using webShop2.repository.core;
 using webShop2.services;
+using Xunit;
 
 namespace webShop2.Tests;
 
@@ -13,6 +16,9 @@ public class ProductServiceUnitTests
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly ProductService _service;
 
+    private readonly Mock<IImageStorageService> _imageStorageMock;
+    private readonly Mock<IImageRepository> _imageRepositoryMock;
+
     public ProductServiceUnitTests()
     {
         _productRepositoryMock =
@@ -21,12 +27,23 @@ public class ProductServiceUnitTests
         _unitOfWorkMock =
             new Mock<IUnitOfWork>();
 
+        _imageStorageMock =
+            new Mock<IImageStorageService>();
+
+        _imageRepositoryMock =
+            new Mock<IImageRepository>();
+
         _unitOfWorkMock
             .Setup(x => x.Products)
             .Returns(_productRepositoryMock.Object);
 
-        _service =
-            new ProductService(_unitOfWorkMock.Object);
+        _unitOfWorkMock
+            .Setup(x => x.Images)
+            .Returns(_imageRepositoryMock.Object);
+
+        _service = new ProductService(
+            _unitOfWorkMock.Object,
+            _imageStorageMock.Object);
     }
 
     [Fact]
@@ -111,6 +128,79 @@ public class ProductServiceUnitTests
             Times.Once);
     }
 
+    //    [Fact]
+    //    public async Task CreateAsync_AddsProductAndSavesChanges()
+    //    {
+    //        Product product = new Product
+    //        {
+    //            Id = 1,
+    //            Name = "Laptop",
+    //            Description = "Gaming laptop",
+    //            Price = 1200,
+    //            CategoryId = 10
+    //        };
+
+    //        Mock<ICategoryRepository> categoryRepositoryMock =
+    //            new Mock<ICategoryRepository>();
+
+    //        categoryRepositoryMock
+    //            .Setup(x => x.GetByIdAsync(10))
+    //            .ReturnsAsync(new Category
+    //            {
+    //                Id = 10
+    //            });
+
+    //        _unitOfWorkMock
+    //            .Setup(x => x.Categories)
+    //            .Returns(categoryRepositoryMock.Object);
+
+    //        _productRepositoryMock
+    //            .Setup(x => x.AddAsync(product))
+    //            .Returns(Task.CompletedTask);
+
+    //        _unitOfWorkMock
+    //            .Setup(x => x.SaveChangesAsync())
+    //            .ReturnsAsync(1);
+
+
+
+    //        using MemoryStream stream = new MemoryStream(
+    //    new byte[] { 1, 2, 3 });
+
+    //        IFormFile image = new FormFile(
+    //            stream,
+    //            0,
+    //            stream.Length,
+    //            "Images",
+    //            "laptop.jpg");
+
+    //        List<IFormFile> images = new List<IFormFile>
+    //{
+    //    image
+    //};
+    //        _imageStorageMock
+    //    .Setup(x => x.UploadAsync(
+    //        It.IsAny<IFormFile>(),
+    //        It.IsAny<string>()))
+    //    .ReturnsAsync(
+    //        new StoredImage(
+    //            "https://example.com/laptop.jpg",
+    //            "test/laptop"));
+
+    //        Product? result =
+    //            await _service.CreateAsync(product, images);
+
+
+    //        Assert.Equal(product, result);
+
+    //        _productRepositoryMock.Verify(
+    //            x => x.AddAsync(product),
+    //            Times.Once);
+
+    //        _unitOfWorkMock.Verify(
+    //            x => x.SaveChangesAsync(),
+    //            Times.Once);
+    //    }
     [Fact]
     public async Task CreateAsync_AddsProductAndSavesChanges()
     {
@@ -141,22 +231,72 @@ public class ProductServiceUnitTests
             .Setup(x => x.AddAsync(product))
             .Returns(Task.CompletedTask);
 
+        _imageRepositoryMock
+            .Setup(x => x.AddAsync(It.IsAny<Image>()))
+            .Returns(Task.CompletedTask);
+
         _unitOfWorkMock
             .Setup(x => x.SaveChangesAsync())
             .ReturnsAsync(1);
 
-        Product? result =
-            await _service.CreateAsync(product);
+        using MemoryStream stream = new MemoryStream(
+            new byte[] { 1, 2, 3 });
 
+        IFormFile image = new FormFile(
+            stream,
+            0,
+            stream.Length,
+            "Images",
+            "laptop.jpg");
+
+        List<IFormFile> images = new List<IFormFile>
+    {
+        image
+    };
+
+        _imageStorageMock
+            .Setup(x => x.UploadAsync(
+                It.IsAny<IFormFile>(),
+                It.IsAny<string>()))
+            .ReturnsAsync(
+                new StoredImage(
+                    "https://example.com/laptop.jpg",
+                    "test/laptop"));
+
+        Product? result =
+            await _service.CreateAsync(product, images);
+
+        Assert.NotNull(result);
         Assert.Equal(product, result);
+        Assert.Single(result.Images);
+
+        Image createdImage = result.Images[0];
+
+        Assert.Equal(1, createdImage.ProductId);
+        Assert.Equal(
+            "https://example.com/laptop.jpg",
+            createdImage.Url);
+        Assert.Equal("test/laptop", createdImage.PublicId);
+        Assert.True(createdImage.IsMain);
+        Assert.Equal(0, createdImage.SortOrder);
 
         _productRepositoryMock.Verify(
             x => x.AddAsync(product),
             Times.Once);
 
+        _imageRepositoryMock.Verify(
+            x => x.AddAsync(It.IsAny<Image>()),
+            Times.Once);
+
+        _imageStorageMock.Verify(
+            x => x.UploadAsync(
+                It.IsAny<IFormFile>(),
+                It.IsAny<string>()),
+            Times.Once);
+
         _unitOfWorkMock.Verify(
             x => x.SaveChangesAsync(),
-            Times.Once);
+            Times.Exactly(2));
     }
 
     [Fact]

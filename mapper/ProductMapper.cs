@@ -9,6 +9,8 @@ namespace webShop2.mapper;
 public class ProductMapper
 {
     private readonly ImageMapper _imageMapper = new ImageMapper();
+    
+    
 
     public ProductDto ToDto(Product product)
     {
