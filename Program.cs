@@ -53,6 +53,7 @@ builder.Services.AddScoped<ProductValueMapper>();
 
 builder.Services.Configure<CloudinarySettings>(
     builder.Configuration.GetSection("Cloudinary"));
+
 builder.Services.AddScoped<IImageStorageService, CloudinaryImageStorageService>();
 
 builder.Services.AddCors(options =>
