@@ -38,7 +38,7 @@ public class ImageController : ControllerBase
             {
                 return BadRequest(new
                 {
-                    message = "Nije poslata slika ili je fajl prazan."
+                    message = "Nije poslata slika ili je fajl prazan..."
                 });
             }
 
