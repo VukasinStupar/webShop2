@@ -1,9 +1,9 @@
-﻿us
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using webShop2.midlleware;
 
 namespace webShop2.middleware;
+
 
 public class ExceptionMiddleware
 {
