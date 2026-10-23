@@ -2,23 +2,25 @@
 import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
-import CategoryList from "./components/CategoryList";
 import Marketplace from "./components/Marketplace";
-import CategoryStats from "./components/CategoryStats"; // DODATO
+import CategoryStats from "./components/CategoryStats";
 import Footer from "./components/Footer";
 import "./App.css";
 import apiUrl from "./api";
+import CreateProduct from "./components/CreateProduct";
 
 function App() {
     const [search, setSearch] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("Sve kategorije");
     const [categories, setCategories] = useState([]);
-    const [products, setProducts] = useState([]); // DODATO
+    const [products, setProducts] = useState([]);
+    const [showCreateProduct, setShowCreateProduct] = useState(false);
+    const [productsRefreshKey, setProductsRefreshKey] = useState(0);
+    const [sortBy, setSortBy] = useState("recommended");
 
     useEffect(() => {
         async function getCategories() {
             try {
-              
                 const response = await fetch(`${apiUrl}/api/Category`);
 
                 if (!response.ok) {
@@ -37,12 +39,9 @@ function App() {
         getCategories();
     }, []);
 
-    // DODATO: učitavanje proizvoda za statistiku
     useEffect(() => {
         async function getProducts() {
-
-            // probamo više mogućih naziva endpointa
-            const endpoints =  ["/api/Product, /api/Products"];
+            const endpoints = ["/api/Product", "/api/Products"];
 
             for (const endpoint of endpoints) {
                 try {
@@ -56,13 +55,14 @@ function App() {
                     }
 
                     const data = await response.json();
-                    console.log(`PROIZVODI (${endpoint}):`, data); // privremeno, za proveru
+                    console.log(`PROIZVODI (${endpoint}):`, data);
 
                     setProducts(
                         Array.isArray(data)
                             ? data
                             : data.items ?? data.products ?? []
                     );
+
                     return;
                 } catch (error) {
                     console.error(`Greška (${endpoint}):`, error);
@@ -71,41 +71,54 @@ function App() {
         }
 
         getProducts();
-    }, []);
-   
+    }, [productsRefreshKey]);
+
     const stats = categories.map((cat) => ({
-    name: cat.name,
-    count: products
-        .filter((p) => Number(p.categoryId) === Number(cat.id))
-        .reduce((sum, p) => sum + (Number(p.quantity) || 0), 0),
-}));
+        name: cat.name,
+        count: products
+            .filter((p) => Number(p.categoryId) === Number(cat.id))
+            .reduce((sum, p) => sum + (Number(p.quantity) || 0), 0),
+    }));
 
     return (
         <div className="app">
             <Header
                 search={search}
                 onSearchChange={setSearch}
+                onAddProduct={() => setShowCreateProduct(true)}
+                categories={categories}
+                selectedCategory={selectedCategory}
+                onCategoryChange={setSelectedCategory}
+                sortBy={sortBy}
+                onSortChange={setSortBy}
             />
 
             <main className="app__main">
                 {/* <Hero /> */}
 
-                <CategoryList
+                <Marketplace
+                    search={search}
                     categories={categories}
                     selectedCategory={selectedCategory}
                     onCategoryChange={setSelectedCategory}
+                    sortBy={sortBy}
                 />
-
-                <Marketplace
-    search={search}
-    categories={categories}
-    selectedCategory={selectedCategory}
-    onCategoryChange={setSelectedCategory}
-/>
             </main>
 
-            {/* DODATO: statistika iznad footera */}
             <CategoryStats stats={stats} />
+
+            {showCreateProduct && (
+                <CreateProduct
+                    categories={categories}
+                    onCreated={() => {
+                        setShowCreateProduct(false);
+                        setProductsRefreshKey(
+                            (previousKey) => previousKey + 1
+                        );
+                    }}
+                    onClose={() => setShowCreateProduct(false)}
+                />
+            )}
 
             <Footer />
         </div>

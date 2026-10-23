@@ -184,6 +184,79 @@
     transform: translateY(0);
 }
 
+/* =========================================
+   DODAJ PROIZVOD
+   Stil usklađen sa dugmetom PRETRAŽI
+========================================= */
+
+.site-header__add-product {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    flex-shrink: 0;
+
+    padding: 11px 17px;
+
+    border: 1px solid rgba(125, 211, 252, 0.25);
+    border-radius: 10px;
+
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.18);
+
+    transition:
+        background 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+.site-header__add-product span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 6px;
+
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.site-header__add-product:hover {
+    background: linear-gradient(135deg, #38bdf8, #3b82f6);
+
+    box-shadow:
+        0 5px 18px rgba(56, 189, 248, 0.22),
+        0 0 18px rgba(45, 212, 191, 0.08);
+
+    transform: translateY(-1px);
+}
+
+.site-header__add-product:active {
+    transform: translateY(0);
+}
+
+.site-header__add-product:focus-visible {
+    outline: 3px solid rgba(56, 189, 248, 0.65);
+    outline-offset: 3px;
+}
+
+/* =========================================
+   RESPONSIVE — TABLET
+========================================= */
+
 @media (max-width: 1050px) {
     .site-header__inner {
         flex-wrap: wrap;
@@ -199,7 +272,15 @@
     .site-header__nav {
         margin-left: auto;
     }
+
+    .site-header__add-product {
+        margin-left: auto;
+    }
 }
+
+/* =========================================
+   RESPONSIVE — MOBILNI
+========================================= */
 
 @media (max-width: 600px) {
     .site-header__inner {
@@ -234,14 +315,91 @@
     .site-header__search-button {
         padding: 11px 12px;
     }
+
+    .site-header__add-product {
+        padding: 11px 12px;
+        gap: 7px;
+        font-size: 12px;
+    }
 }
+
+/* =========================================
+   PRISTUPAČNOST
+========================================= */
 
 @media (prefers-reduced-motion: reduce) {
     .site-header__brand-icon,
     .site-header__nav-link,
     .site-header__nav-link::after,
     .site-header__search,
-    .site-header__search-button {
+    .site-header__search-button,
+    .site-header__add-product {
         transition: none;
+    }
+}
+
+
+.site-header__categories {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px 20px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 1050px) {
+    .site-header__categories {
+        padding-right: 28px;
+        padding-left: 28px;
+    }
+}
+
+@media (max-width: 600px) {
+    .site-header__categories {
+        padding: 0 16px 16px;
+    }
+}
+
+.site-header__sort {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.site-header__sort-label {
+    color: #9aacc5;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.site-header__sort-select {
+    max-width: 100%;
+    padding: 10px 36px 10px 13px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 10px;
+    background-color: #111b2d;
+    color: #edf4ff;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.site-header__sort-select:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+    .site-header__sort {
+        justify-content: flex-start;
+        margin-top: 14px;
+    }
+
+    .site-header__sort-select {
+        flex: 1;
+        min-width: 0;
     }
 }

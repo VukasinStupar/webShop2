@@ -5,7 +5,6 @@ using webShop2.mapper;
 using webShop2.model;
 using webShop2.services.core;
 
-
 namespace webShop2.controllers;
 
 [ApiController]

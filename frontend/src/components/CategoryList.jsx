@@ -19,14 +19,14 @@ function CategoryList({
             <div className="category-list__heading">
                 <div>
                     <span className="category-list__eyebrow">
-                        ISTRAŽITE PONUDU
+                        
                     </span>
 
                     <h2
                         className="category-list__title"
                         id="category-list-title"
                     >
-                        Popularne kategorije
+                        
                     </h2>
                 </div>
 

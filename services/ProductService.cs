@@ -86,12 +86,10 @@
             return true;
         }
 
-        public async Task<Product?> CreateAsync(
-     Product product,
-     List<IFormFile> images)
+        public async Task<Product?> CreateAsync(Product product, List<IFormFile> images)
         {
-            // 1. Provera da li kategorija postoji
-            webShop2.model.Category? category =
+            
+            Category? category =
                 await _unitOfWork.Categories.GetByIdAsync(product.CategoryId);
 
             if (category == null)
@@ -99,14 +97,14 @@
                 return null;
             }
 
-            // 2. Provera da li su slike prosleđene
+            
             if (images == null || images.Count == 0)
             {
                 throw new ArgumentException(
                     "Morate dodati najmanje jednu sliku proizvoda.");
             }
 
-            // 3. Validacija svih slika pre upload-a
+            
             List<string> allowedExtensions =
                 new List<string> { ".jpg", ".jpeg", ".png", ".webp" };
 

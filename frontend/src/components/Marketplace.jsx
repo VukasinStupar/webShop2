@@ -1,6 +1,5 @@
 ﻿
 import { useEffect, useRef, useState } from "react";
-import FilterSidebar from "./FilterSidebar";
 import ProductList from "./ProductList";
 import "./Marketplace.css";
 
@@ -9,8 +8,8 @@ function Marketplace({
     categories,
     selectedCategory,
     onCategoryChange,
+    sortBy
 }) {
-    const [sortBy, setSortBy] = useState("recommended");
     const [shouldScrollToProducts, setShouldScrollToProducts] = useState(false);
 
     const previousFiltersRef = useRef({
@@ -54,14 +53,6 @@ function Marketplace({
             </div>
 
             <div className="marketplace__layout">
-                <FilterSidebar
-                    categories={categories}
-                    selectedCategory={selectedCategory}
-                    onCategoryChange={onCategoryChange}
-                    sortBy={sortBy}
-                    onSortChange={setSortBy}
-                />
-
                 <ProductList
                     search={search}
                     categories={categories}

@@ -1,159 +1,488 @@
 ﻿
+/* =========================================
+   DUKA SHOP — PREMIUM FOOTER
+========================================= */
+
 .site-footer {
     position: relative;
+    isolation: isolate;
     width: 100%;
-    border-top: 1px solid #e7eaf0;
-    background: #ffffff;
+    margin-top: 48px;
+    overflow: hidden;
+    color: #edf4ff;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(15, 27, 47, 0.98),
+            rgba(7, 13, 26, 0.99) 60%,
+            rgba(10, 25, 43, 0.98)
+        );
+    border-top: 1px solid rgba(56, 189, 248, 0.28);
+}
+
+/* Dekorativni svetlosni efekat */
+
+.site-footer__glow {
+    position: absolute;
+    z-index: -1;
+    top: -170px;
+    left: 12%;
+    width: 460px;
+    height: 300px;
+    pointer-events: none;
+    background: rgba(14, 165, 233, 0.12);
+    filter: blur(100px);
+    border-radius: 50%;
 }
 
 .site-footer__inner {
+    position: relative;
+    width: 100%;
     max-width: 1440px;
     margin: 0 auto;
-    padding: 38px 40px 22px;
+    padding: 58px 40px 24px;
 }
+
+/* =========================================
+   GLAVNI RASPORED
+========================================= */
+
+.site-footer__main {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
+    align-items: center;
+    gap: 72px;
+    padding-bottom: 48px;
+}
+
+/* =========================================
+   BREND
+========================================= */
 
 .site-footer__brand {
     display: inline-flex;
     align-items: center;
-    gap: 11px;
-    color: #172033;
-    font-size: 15px;
-    font-weight: 800;
-    letter-spacing: -0.3px;
-    transition: color 180ms ease;
-}
-
-.site-footer__brand:hover {
-    color: #2457e6;
+    gap: 13px;
+    width: fit-content;
+    color: #f8fbff;
+    text-decoration: none;
 }
 
 .site-footer__brand-icon {
-    width: 36px;
-    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 11px;
-    background: linear-gradient(135deg, #3568f5, #1746c7);
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 15px;
+    background: linear-gradient(135deg, #38bdf8, #2563eb 70%, #1d4ed8);
     color: #ffffff;
-    font-size: 18px;
-    font-weight: 800;
-    box-shadow: 0 4px 12px rgba(36, 87, 230, 0.18);
+    font-size: 25px;
+    font-weight: 900;
+    box-shadow:
+        0 8px 24px rgba(37, 99, 235, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
     transition:
-        transform 200ms ease,
-        box-shadow 200ms ease;
+        transform 220ms ease,
+        box-shadow 220ms ease;
 }
 
 .site-footer__brand:hover .site-footer__brand-icon {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 16px rgba(36, 87, 230, 0.25);
+    transform: translateY(-3px) rotate(-3deg);
+    box-shadow: 0 12px 30px rgba(56, 189, 248, 0.3);
+}
+
+.site-footer__brand-name {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 1.3px;
+}
+
+.site-footer__brand-name span {
+    color: #38bdf8;
+}
+
+/* =========================================
+   OPIS
+========================================= */
+
+.site-footer__tagline {
+    margin: 28px 0 16px;
+    color: #f8fbff;
+    font-size: clamp(26px, 3vw, 38px);
+    font-weight: 850;
+    letter-spacing: -1.4px;
+    line-height: 1.2;
+}
+
+.site-footer__tagline span {
+    color: #38bdf8;
 }
 
 .site-footer__description {
-    max-width: 600px;
-    margin: 15px 0 24px;
-    color: #667085;
+    max-width: 530px;
+    margin: 0;
+    color: #a5b4ca;
+    font-size: 14px;
+    line-height: 1.95;
+}
+
+.site-footer__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 24px;
+    padding: 10px 14px;
+    border: 1px solid rgba(45, 212, 191, 0.18);
+    border-radius: 999px;
+    background: rgba(45, 212, 191, 0.06);
+    color: #c1f5eb;
     font-size: 12px;
-    line-height: 1.85;
-}
-
-.site-footer__contact {
-    margin: 0 0 28px;
-    padding: 20px 0 24px;
-    border-top: 1px solid #edf0f6;
-    border-bottom: 1px solid #edf0f6;
-}
-
-.site-footer__contact h3 {
-    margin: 0 0 14px;
-    color: #172033;
-    font-size: 13px;
-    font-weight: 800;
-}
-
-.site-footer__contact p {
-    margin: 8px 0 0;
-    color: #667085;
-    font-size: 12px;
-    line-height: 1.7;
-    overflow-wrap: anywhere;
-}
-
-.site-footer__contact strong {
-    color: #344054;
-    font-weight: 700;
-}
-
-.site-footer__contact a {
-    color: #2457e6;
     font-weight: 600;
-    text-decoration: none;
-    transition: color 180ms ease;
 }
 
-.site-footer__contact a:hover {
-    color: #1746c7;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+.site-footer__badge-dot {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #2dd4bf;
+    box-shadow: 0 0 12px rgba(45, 212, 191, 0.65);
 }
+
+/* =========================================
+   KONTAKT KARTICA
+========================================= */
+
+.site-footer__contact-card {
+    padding: 28px;
+    border: 1px solid rgba(148, 163, 184, 0.17);
+    border-radius: 24px;
+    background: linear-gradient(
+        145deg,
+        rgba(25, 42, 66, 0.8),
+        rgba(13, 25, 43, 0.85)
+    );
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.site-footer__contact-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 27px;
+}
+
+.site-footer__contact-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 14px;
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+    font-size: 27px;
+}
+
+.site-footer__eyebrow {
+    display: block;
+    margin-bottom: 6px;
+    color: #7dd3fc;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.site-footer__contact-heading h2 {
+    margin: 0;
+    color: #f8fbff;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.site-footer__contact-item {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 16px 0;
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.site-footer__label {
+    display: block;
+    color: #8192ac;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.site-footer__contact-item strong {
+    color: #e6eefb;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+/* =========================================
+   TELEFON
+========================================= */
+
+.site-footer__phone {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+    padding: 17px;
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    border-radius: 17px;
+    background: linear-gradient(
+        110deg,
+        rgba(14, 165, 233, 0.12),
+        rgba(37, 99, 235, 0.08)
+    );
+}
+
+.site-footer__phone-info {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+}
+
+.site-footer__phone-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #38bdf8, #2563eb);
+    color: white;
+    font-size: 21px;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.2);
+}
+
+.site-footer__phone-info > div {
+    min-width: 0;
+}
+
+.site-footer__phone-info a {
+    display: inline-block;
+    margin-top: 5px;
+    color: #f0f9ff;
+    font-size: clamp(14px, 1.4vw, 18px);
+    font-weight: 800;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.site-footer__phone-info a:hover {
+    color: #7dd3fc;
+}
+
+.site-footer__call-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    background: rgba(56, 189, 248, 0.13);
+    color: #7dd3fc;
+    font-size: 24px;
+    text-decoration: none;
+    transition:
+        background 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
+}
+
+.site-footer__call-button:hover {
+    transform: translateX(3px);
+    background: #38bdf8;
+    color: #071321;
+}
+
+/* =========================================
+   DONJA TRAKA
+========================================= */
 
 .site-footer__bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding-top: 18px;
-    color: #8792a5;
-    font-size: 11px;
-    line-height: 1.7;
+    gap: 20px;
+    padding-top: 23px;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
 }
 
-.site-footer__note {
-    color: #667085;
-    text-align: right;
+.site-footer__bottom p {
+    margin: 0;
+    color: #8291a8;
+    font-size: 12px;
+    line-height: 1.8;
 }
 
-/* Mobilni uređaji */
+.site-footer__bottom strong {
+    color: #cbd8ea;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
 
-@media (max-width: 768px) {
+.site-footer__back-to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #a5b4ca;
+    font-size: 12px;
+    font-weight: 650;
+    text-decoration: none;
+    transition: color 180ms ease;
+}
+
+.site-footer__back-to-top span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 10px;
+    color: #7dd3fc;
+    font-size: 17px;
+    transition:
+        transform 180ms ease,
+        background 180ms ease;
+}
+
+.site-footer__back-to-top:hover {
+    color: #f8fbff;
+}
+
+.site-footer__back-to-top:hover span {
+    transform: translateY(-3px);
+    background: rgba(56, 189, 248, 0.12);
+}
+
+/* =========================================
+   TABLETI
+========================================= */
+
+@media (max-width: 900px) {
     .site-footer__inner {
-        padding: 30px 24px 20px;
+        padding: 46px 28px 22px;
+    }
+
+    .site-footer__main {
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
+        gap: 32px;
+    }
+
+    .site-footer__contact-card {
+        padding: 23px;
+    }
+
+    .site-footer__tagline {
+        font-size: 30px;
+    }
+}
+
+/* =========================================
+   MOBILNI UREĐAJI
+========================================= */
+
+@media (max-width: 680px) {
+    .site-footer {
+        margin-top: 32px;
+    }
+
+    .site-footer__inner {
+        padding: 38px 20px 20px;
+    }
+
+    .site-footer__main {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+        padding-bottom: 32px;
+    }
+
+    .site-footer__tagline {
+        margin-top: 23px;
+        font-size: 31px;
     }
 
     .site-footer__description {
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 600px) {
-    .site-footer__inner {
-        padding: 26px 18px 18px;
+        font-size: 13px;
+        line-height: 1.9;
     }
 
-    .site-footer__contact {
-        margin-bottom: 22px;
-        padding: 18px 0 20px;
+    .site-footer__contact-card {
+        padding: 22px;
+        border-radius: 20px;
+    }
+
+    .site-footer__contact-heading h2 {
+        font-size: 19px;
+    }
+
+    .site-footer__phone {
+        padding: 13px;
     }
 
     .site-footer__bottom {
         align-items: flex-start;
         flex-direction: column;
-        gap: 8px;
-    }
-
-    .site-footer__note {
-        text-align: left;
+        gap: 15px;
     }
 }
 
-/* Pristupačnost */
+@media (max-width: 380px) {
+    .site-footer__inner {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .site-footer__contact-card {
+        padding: 17px;
+    }
+
+    .site-footer__phone-info {
+        gap: 9px;
+    }
+
+    .site-footer__phone-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .site-footer__phone-info a {
+        font-size: 14px;
+    }
+}
+
+/* =========================================
+   PRISTUPAČNOST
+========================================= */
 
 @media (prefers-reduced-motion: reduce) {
-    .site-footer__brand,
-    .site-footer__brand-icon,
-    .site-footer__contact a {
-        transition: none;
+    .site-footer *,
+    .site-footer *::before,
+    .site-footer *::after {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition: none !important;
     }
 }
