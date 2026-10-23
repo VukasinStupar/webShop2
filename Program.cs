@@ -74,7 +74,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 
 builder.Services.Configure<CloudinarySettings>(
-    builder.Configuration.GetSection("Cloudinary"));
+    builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddScoped<IImageStorageService, CloudinaryImageStorageService>();
 
 var app = builder.Build();
