@@ -37,11 +37,7 @@
 
         public async Task<List<Product>> GetAllAsync()
         {
-            //List<Product> products = await _unitOfWork.Products.GetAllAsync();
-            List<Product> products = await _unitOfWork.Products.GetAllWithImagesAsync();
-
-            Console.WriteLine("service Count: " + products.Count);
-            return products.ToList();
+            return await _unitOfWork.Products.GetAllWithImagesAsync();
         }
 
 
@@ -170,7 +166,7 @@
                     product.Images.Add(productImage);
 
                     // Dodavanje slike u repozitorijum
-                    await _unitOfWork.Images.AddAsync(productImage);
+                    //await _unitOfWork.Images.AddAsync(productImage);
                 }
 
                 // 6. Čuvanje slika u bazi
