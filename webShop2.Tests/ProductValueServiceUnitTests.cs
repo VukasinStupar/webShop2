@@ -187,7 +187,7 @@ public class ProductValueServiceUnitTests
             .Setup(x => x.SaveChangesAsync())
             .ReturnsAsync(1);
 
-        ProductValue result =
+        ProductValue? result =
             await _service.CreateAsync(value);
 
         Assert.Equal(value, result);
