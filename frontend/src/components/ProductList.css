@@ -255,3 +255,46 @@
     color: #f1f7ff;
 
 }
+
+/* ================================
+   DUGME ZA BRISANJE PROIZVODA
+================================ */
+
+.product-card__delete {
+    align-self: flex-start;
+    margin-top: 12px;
+    padding: 8px 16px;
+
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: var(--radius-small);
+
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.product-card__delete:hover {
+    color: #ffffff;
+    background: #dc2626;
+    border-color: #dc2626;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.28);
+    transform: translateY(-1px);
+}
+
+.product-card__delete:active {
+    transform: translateY(0);
+}
+
+.product-card__delete:focus-visible {
+    outline: 3px solid rgba(239, 68, 68, 0.55);
+    outline-offset: 3px;
+}
+
+.product-card__delete:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}

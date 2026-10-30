@@ -80,6 +80,30 @@ function App() {
             .reduce((sum, p) => sum + (Number(p.quantity) || 0), 0),
     }));
 
+    //vukasin
+    async function handleDeleteProduct(id) {
+    if (!window.confirm("Da li sigurno želiš da obrišeš proizvod?")) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${apiUrl}/api/Product/${id}`, {
+            method: "DELETE"
+        });
+
+        if (!response.ok && response.status !== 404) {
+            throw new Error(`Greška pri brisanju: ${response.status}`);
+        }
+
+        setProducts((prev) => prev.filter((p) => p.id !== id));
+        setProductsRefreshKey((key) => key + 1);
+    } catch (error) {
+        console.error("Greška:", error);
+        alert("Proizvod nije obrisan.");
+    }
+}
+//
+
     return (
         <div className="app">
             <Header
@@ -102,6 +126,7 @@ function App() {
                     selectedCategory={selectedCategory}
                     onCategoryChange={setSelectedCategory}
                     sortBy={sortBy}
+                    onDeleteProduct={handleDeleteProduct}
                 />
             </main>
 

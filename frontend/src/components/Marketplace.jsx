@@ -1,5 +1,4 @@
-﻿
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import ProductList from "./ProductList";
 import "./Marketplace.css";
 
@@ -8,7 +7,8 @@ function Marketplace({
     categories,
     selectedCategory,
     onCategoryChange,
-    sortBy
+    sortBy,
+    onDeleteProduct
 }) {
     const [shouldScrollToProducts, setShouldScrollToProducts] = useState(false);
 
@@ -59,6 +59,7 @@ function Marketplace({
                     selectedCategory={selectedCategory}
                     sortBy={sortBy}
                     shouldScrollToProducts={shouldScrollToProducts}
+                    onDeleteProduct={onDeleteProduct}
                 />
             </div>
         </section>
