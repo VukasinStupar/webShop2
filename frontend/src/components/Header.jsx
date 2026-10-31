@@ -1,17 +1,7 @@
-﻿
-import "./Header.css";
+﻿import "./Header.css";
 import CategoryList from "./CategoryList";
 
-function Header({
-    search,
-    onSearchChange,
-    onAddProduct,
-    categories,
-    selectedCategory,
-    onCategoryChange,
-    sortBy,
-    onSortChange
-}) {
+function Header({ search, onSearchChange, onAddProduct, categories, selectedCategory, onCategoryChange, sortBy, onSortChange }) {
     function handleSubmit(event) {
         event.preventDefault();
     }
@@ -20,9 +10,9 @@ function Header({
         <header className="site-header">
             <div className="site-header__inner">
                 <a className="site-header__brand" href="/">
-                    <span className="site-header__brand-icon">W</span>
+                    <span className="site-header__brand-icon">D</span>
                     <span className="site-header__brand-name">
-                        WEB SHOP
+                        DUKA SHOP
                     </span>
                 </a>
 
@@ -99,6 +89,31 @@ function Header({
                     onCategoryChange={onCategoryChange}
                 />
 
+                <div className="site-header__sort site-header__sort--category">
+                    <label
+                        className="site-header__sort-label"
+                        htmlFor="header-category"
+                    >
+                        Kategorija:
+                    </label>
+
+                    <select
+                        className="site-header__sort-select "
+                        id="header-category"
+                        value={selectedCategory}
+                        onChange={(event) =>
+                            onCategoryChange(event.target.value)
+                        }
+                    >
+                        <option value="Sve kategorije">Sve kategorije</option>
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.name}>
+                                {cat.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
                 <div className="site-header__sort">
                     <label
                         className="site-header__sort-label"
@@ -111,10 +126,7 @@ function Header({
                         className="site-header__sort-select"
                         id="header-sort"
                         value={sortBy}
-                        onChange={(event) =>
-                            onSortChange(event.target.value)
-                            
-                        }
+                        onChange={(event) => onSortChange(event.target.value)}
                     >
                         <option value="recommended">Preporučeno</option>
                         <option value="price-asc">

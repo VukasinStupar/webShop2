@@ -9,11 +9,12 @@ function CreateProduct({ categories, onCreated, onClose }) {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
-    const [quantity, setQuantity] = useState("");
+    const [quantity, setQuantity] = useState("1");
     const [categoryId, setCategoryId] = useState("");
     const [images, setImages] = useState([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    
 
     useEffect(() => {
         return () => {
@@ -229,7 +230,7 @@ function CreateProduct({ categories, onCreated, onClose }) {
                             />
                         </div>
 
-                        <div>
+                        {/* <div>
                             <label htmlFor="product-quantity">
                                 Količina
                             </label>
@@ -244,7 +245,19 @@ function CreateProduct({ categories, onCreated, onClose }) {
                                 }
                                 required
                             />
-                        </div>
+                        </div> */}
+                        <div>
+    <label htmlFor="product-quantity">
+        Količina
+    </label>
+    <input
+        id="product-quantity"
+        type="number"
+        value="1"
+        disabled
+        readOnly
+    />
+</div>
                     </div>
 
                     <label htmlFor="product-category">

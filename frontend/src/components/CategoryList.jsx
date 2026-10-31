@@ -35,7 +35,7 @@ function CategoryList({
                 </span>
             </div>
 
-            <div className="category-list__items">
+            <div className="category-list__items categoryListItemsMobile categoryListItemsNormal">
                 {allCategories.map((category) => (
                     <button
                         className={[

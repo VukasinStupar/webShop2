@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -79,7 +78,7 @@ function App() {
             .filter((p) => Number(p.categoryId) === Number(cat.id))
             .reduce((sum, p) => sum + (Number(p.quantity) || 0), 0),
     }));
-
+    console.log('stats',stats);
     //vukasin
     async function handleDeleteProduct(id) {
     if (!window.confirm("Da li sigurno želiš da obrišeš proizvod?")) {
@@ -119,6 +118,7 @@ function App() {
 
             <main className="app__main">
                 {/* <Hero /> */}
+
 
                 <Marketplace
                     search={search}

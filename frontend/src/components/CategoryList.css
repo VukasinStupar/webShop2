@@ -49,7 +49,8 @@
     gap: 12px;
 }
 
-/* Kartica kategorije */
+/* Karti
+ca kategorije */
 
 .category-list__item {
     position: relative;
@@ -355,4 +356,22 @@
         animation: none;
         transition: none;
     }
+}
+
+@media (max-width: 750px) {
+    
+    .categoryListItemsMobile {
+        display: none !important;
+    }
+
+}
+
+@media (min-width: 750px) {
+    
+    .categoryListItemsNormal {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+    
 }
