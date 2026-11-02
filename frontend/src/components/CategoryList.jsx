@@ -30,9 +30,9 @@ function CategoryList({
                     </h2>
                 </div>
 
-                <span className="category-list__count">
+                {/* <span className="category-list__count">
                     {categories.length} kategorija
-                </span>
+                </span> */}
             </div>
 
             <div className="category-list__items categoryListItemsMobile categoryListItemsNormal">

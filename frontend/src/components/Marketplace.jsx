@@ -8,7 +8,8 @@ function Marketplace({
     selectedCategory,
     onCategoryChange,
     sortBy,
-    onDeleteProduct
+    onDeleteProduct,
+    onProductChanged
 }) {
     const [shouldScrollToProducts, setShouldScrollToProducts] = useState(false);
 
@@ -60,6 +61,7 @@ function Marketplace({
                     sortBy={sortBy}
                     shouldScrollToProducts={shouldScrollToProducts}
                     onDeleteProduct={onDeleteProduct}
+                    onProductChanged={onProductChanged}
                 />
             </div>
         </section>

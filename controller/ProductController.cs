@@ -101,9 +101,9 @@ public class ProductController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<ProductDto>> Update(
         int id,
-        CreateProductDto dto)
+        UpdateProductDto dto)
     {
-        Product productUpdate = _mapper.ToEntity(dto);
+        Product productUpdate = _mapper.ToEntityUpdate(dto);
 
         Product? product = await _service.UpdateAsync(id, productUpdate);
 

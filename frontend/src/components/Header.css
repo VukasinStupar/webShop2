@@ -409,3 +409,24 @@
         display: none !important;
     }
 }
+
+.site-header__brand-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.15;
+}
+
+.site-header__brand-phone {
+    margin-top: 2px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    opacity: 0.8;
+    color: burlywood;
+}
+
+.site-header__brand-info {
+    display: flex;
+    flex-direction: column;
+}

@@ -1,5 +1,4 @@
-﻿
-/* ========================================
+﻿/* ========================================
    PRODUCT LIST — DARK PREMIUM
 ======================================== */
 
@@ -149,7 +148,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 6px; /* IZMENJENO: bilo 12px, manji razmak između atributa */
 
     padding: 22px;
     overflow: hidden;
@@ -256,15 +255,22 @@
 
 }
 
+/* IZMENJENO: uklonjene podrazumevane margine paragrafa
+   (one su pravile veliki vertikalni razmak) */
+
+.product-card p {
+    margin: 0;
+    line-height: 1.4;
+}
+
 /* ================================
    DUGME ZA BRISANJE PROIZVODA
 ================================ */
 
-.product-card__delete {
-    align-self: flex-start;
-    margin-top: 12px;
-    padding: 8px 16px;
+/* IZMENJENO: uklonjeni align-self i margin-top,
+   jer su smetali rasporedu dugmadi u redu */
 
+.product-card__delete {
     color: #fca5a5;
     background: rgba(239, 68, 68, 0.12);
     border: 1px solid rgba(239, 68, 68, 0.35);
@@ -297,4 +303,52 @@
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
+}
+
+/* ================================
+   DUGMAD ZA IZMENU I BRISANJE
+================================ */
+
+/* IZMENJENO: dugmad se uvek uklapaju u karticu */
+
+.product-card__actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.product-card__actions button {
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 0;
+    padding: 8px 4px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    white-space: normal;
+    box-sizing: border-box;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.product-card__edit {
+    background: #2563eb;
+    border: 1px solid #2563eb;
+    color: #ffffff;
+}
+
+.product-card__edit:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+.product-card__edit:focus-visible {
+    outline: 2px solid #93c5fd;
+    outline-offset: 2px;
+}
+
+.product-card__edit:active {
+    transform: translateY(1px);
 }

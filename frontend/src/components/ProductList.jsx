@@ -1,11 +1,10 @@
-﻿
-
-import { useCallback, useEffect, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useRef, useState } from "react";
 import EmptyProducts from "./EmptyProducts";
 import ProductProfile from "./ProductProfile";
 import { getMainImage } from "../utils/images";
 import "./ProductList.css";
 import apiUrl from "../api";
+import EditProduct from "./EditProduct";
 
 // IZMENJENO: za sada vidljivo svima; pre objave vratiti proveru (?admin=1)
 const isAdmin = true;
@@ -16,12 +15,17 @@ function ProductList({
     categories = [],
     sortBy = "recommended",
     shouldScrollToProducts = false,
-    onDeleteProduct
+    onDeleteProduct,
+    onProductChanged
 }) {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [selectedProductId, setSelectedProductId] = useState(null);
+    const [editingProductId, setEditingProductId] = useState(null);
+
+    const editingProduct =
+        products.find((p) => p.id === editingProductId) ?? null;
 
     const productListRef = useRef(null);
 
@@ -137,23 +141,14 @@ function ProductList({
 
     return (
         <div className="product-list" ref={productListRef}>
-            <div className="product-list__toolbar">
-                <div className="product-list__result">
-                    <span className="product-list__result-label">
-                        Trenutna ponuda
-                    </span>
-
-                    <span className="product-list__result-value">
-                        {filteredProducts.length} proizvoda
-                    </span>
-                </div>
+            {/* <div className="product-list__toolbar">
 
                 {search.trim() && (
                     <div className="product-list__search">
                         Pretraga: <strong>{search.trim()}</strong>
                     </div>
                 )}
-            </div>
+            </div> */}
 
             <div className="product-list__content">
                 {loading ? (
@@ -192,11 +187,11 @@ function ProductList({
                                     <p>{product.description}</p>
 
                                     {product.price == null
-    ? "Cena nije navedena"
-    : new Intl.NumberFormat("sr-RS", {
-          style: "currency",
-          currency: "EUR",
-      }).format(Number(product.price))}
+                                        ? "Cena nije navedena"
+                                        : new Intl.NumberFormat("sr-RS", {
+                                            style: "currency",
+                                            currency: "EUR",
+                                        }).format(Number(product.price))}
 
                                     <p>
                                         Dostupna količina: {product.quantity}
@@ -204,17 +199,32 @@ function ProductList({
 
                                     <p>Status: {product.status}</p>
 
-                                    {/* DODATO: dugme za brisanje proizvoda */}
-                                    {isAdmin && onDeleteProduct && (
-                                        <button
-                                            type="button"
-                                            className="product-card__delete"
-                                            onClick={(event) =>
-                                                handleDeleteClick(event, product.id)
-                                            }
-                                        >
-                                            Obriši proizvod
-                                        </button>
+                                    {/* DODATO: dugmad za izmenu i brisanje proizvoda */}
+                                    {isAdmin && (
+                                        <div className="product-card__actions">
+                                            <button
+                                                type="button"
+                                                className="product-card__edit"
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    setEditingProductId(product.id);
+                                                }}
+                                            >
+                                                Izmeni proizvod
+                                            </button>
+
+                                            {onDeleteProduct && (
+                                                <button
+                                                    type="button"
+                                                    className="product-card__delete"
+                                                    onClick={(event) =>
+                                                        handleDeleteClick(event, product.id)
+                                                    }
+                                                >
+                                                    Obriši proizvod
+                                                </button>
+                                            )}
+                                        </div>
                                     )}
                                 </article>
                             );
@@ -229,6 +239,20 @@ function ProductList({
                     isAdmin={isAdmin}
                     onChanged={() => loadProducts(true)}
                     onClose={() => setSelectedProductId(null)}
+                />
+            )}
+
+            {/* DODATO: modal za izmenu proizvoda */}
+            {editingProduct && (
+                <EditProduct
+                    product={editingProduct}
+                    categories={categories}
+                    onClose={() => setEditingProductId(null)}
+                    onSaved={() => {
+                        setEditingProductId(null);
+                        loadProducts(true);
+                        onProductChanged?.();
+                    }}
                 />
             )}
         </div>

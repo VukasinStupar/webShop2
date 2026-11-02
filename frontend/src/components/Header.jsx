@@ -9,12 +9,24 @@ function Header({ search, onSearchChange, onAddProduct, categories, selectedCate
     return (
         <header className="site-header">
             <div className="site-header__inner">
-                <a className="site-header__brand" href="/">
-                    <span className="site-header__brand-icon">D</span>
-                    <span className="site-header__brand-name">
-                        DUKA SHOP
-                    </span>
-                </a>
+                <div className="site-header__brand">
+                    <a className="site-header__brand-icon" href="/">
+                        D
+                    </a>
+
+                    <div className="site-header__brand-info">
+                        <a className="site-header__brand-name" href="/">
+                            DUKA SHOP
+                        </a>
+
+                        <a
+                            className="site-header__brand-phone"
+                            href="tel:+381641360754"
+                        >
+                                 +381 64 136 0754
+                        </a>
+                    </div>
+                </div>
 
                 <nav
                     className="site-header__nav"

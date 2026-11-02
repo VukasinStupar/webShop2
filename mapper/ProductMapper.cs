@@ -39,6 +39,18 @@ public class ProductMapper
         };
     }
 
+    public Product ToEntityUpdate(UpdateProductDto dto)
+    {
+        return new Product
+        {
+            Name = dto.Name,
+            Description = dto.Description,
+            Price = dto.Price,
+            Quantity = dto.Quantity,
+            CategoryId = dto.CategoryId
+        };
+    }
+
     public void UpdateEntity(Product product, UpdateProductDto dto)
     {
         product.Name = dto.Name;

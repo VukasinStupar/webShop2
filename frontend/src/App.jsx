@@ -79,7 +79,7 @@ function App() {
             .reduce((sum, p) => sum + (Number(p.quantity) || 0), 0),
     }));
     console.log('stats',stats);
-    //vukasin
+    
     async function handleDeleteProduct(id) {
     if (!window.confirm("Da li sigurno želiš da obrišeš proizvod?")) {
         return;
@@ -101,7 +101,7 @@ function App() {
         alert("Proizvod nije obrisan.");
     }
 }
-//
+
 
     return (
         <div className="app">
@@ -127,6 +127,9 @@ function App() {
                     onCategoryChange={setSelectedCategory}
                     sortBy={sortBy}
                     onDeleteProduct={handleDeleteProduct}
+                    onProductChanged={() =>
+                        setProductsRefreshKey((key) => key + 1)
+                    }
                 />
             </main>
 
