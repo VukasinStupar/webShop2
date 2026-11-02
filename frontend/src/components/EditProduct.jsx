@@ -1,6 +1,7 @@
+
 import { useState } from "react";
 import apiUrl from "../api";
-import "./CreateProduct.css";
+import "./EditProduct.css";
 
 const STATUSES = ["ACTIVE", "INACTIVE", "SOLD"];
 
@@ -84,7 +85,7 @@ function EditProduct({ product, categories, onSaved, onClose }) {
 
     return (
         <div
-            className="create-product__overlay"
+            className="edit-product__overlay"
             onMouseDown={(event) => {
                 if (event.target === event.currentTarget && !loading) {
                     onClose();
@@ -93,17 +94,17 @@ function EditProduct({ product, categories, onSaved, onClose }) {
             onClick={(event) => event.stopPropagation()}
         >
             <section
-                className="create-product"
+                className="edit-product"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="edit-product-title"
             >
-                <div className="create-product__header">
+                <div className="edit-product__header">
                     <h2 id="edit-product-title">Izmeni proizvod</h2>
 
                     <button
                         type="button"
-                        className="create-product__close"
+                        className="edit-product__close"
                         onClick={onClose}
                         disabled={loading}
                         aria-label="Zatvori formu"
@@ -135,7 +136,7 @@ function EditProduct({ product, categories, onSaved, onClose }) {
                         required
                     />
 
-                    <div className="create-product__row">
+                    <div className="edit-product__row">
                         <div>
                             <label htmlFor="edit-price">Cena</label>
                             <input
@@ -196,15 +197,15 @@ function EditProduct({ product, categories, onSaved, onClose }) {
                     </select>
 
                     {error && (
-                        <p className="create-product__error" role="alert">
+                        <p className="edit-product__error" role="alert">
                             {error}
                         </p>
                     )}
 
-                    <div className="create-product__actions">
+                    <div className="edit-product__actions">
                         <button
                             type="button"
-                            className="create-product__cancel"
+                            className="edit-product__cancel"
                             onClick={onClose}
                             disabled={loading}
                         >
@@ -213,7 +214,7 @@ function EditProduct({ product, categories, onSaved, onClose }) {
 
                         <button
                             type="submit"
-                            className="create-product__submit"
+                            className="edit-product__submit"
                             disabled={loading}
                         >
                             {loading ? "Čuvanje..." : "Sačuvaj izmene"}
