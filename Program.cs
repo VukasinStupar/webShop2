@@ -186,6 +186,15 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+// APPLY MIGRATIONS
+using (IServiceScope migrationScope = app.Services.CreateScope())
+{
+    AppDbContext db =
+        migrationScope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    await db.Database.MigrateAsync();
+}
+
 // DATABASE ROLE SEEDING
 
 using (IServiceScope scope = app.Services.CreateScope())
