@@ -31,15 +31,21 @@ public class ProductService : IProductService
         return product;
     }
 
-    public async Task<List<Product>> GetAllAsync()
+    public async Task<PagedResult<Product>> GetAllAsync(int page, int pageSize)
     {
-        //List<Product> products = await _unitOfWork.Products.GetAllAsync();
-        List<Product> products = await _unitOfWork.Products.GetAllWithImagesAsync();
+        List<Product> products = await _unitOfWork.Products
+            .GetAllWithImagesAsync(page, pageSize);
 
-        Console.WriteLine("service Count: " + products.Count);
-        return products.ToList();
+        int totalCount = await _unitOfWork.Products.GetTotalCountAsync();
+
+        return new PagedResult<Product>
+        {
+            Items = products,
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
     }
-
 
 
     public async Task<Product?> CreateAsync(

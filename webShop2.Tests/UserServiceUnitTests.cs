@@ -1,6 +1,11 @@
-﻿using Moq;
+﻿
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 using webShop2.model;
+using webShop2.model.enums;
 using webShop2.repository.core;
 using webShop2.services;
 
@@ -10,6 +15,7 @@ public class UserServiceUnitTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+    private readonly Mock<UserManager<User>> _userManagerMock;
     private readonly UserService _service;
 
     public UserServiceUnitTests()
@@ -24,9 +30,28 @@ public class UserServiceUnitTests
             .Setup(x => x.Users)
             .Returns(_userRepositoryMock.Object);
 
+        Mock<IUserStore<User>> userStoreMock =
+            new Mock<IUserStore<User>>();
+
+        _userManagerMock =
+            new Mock<UserManager<User>>(
+                userStoreMock.Object,
+                Options.Create(new IdentityOptions()),
+                Mock.Of<IPasswordHasher<User>>(),
+                Array.Empty<IUserValidator<User>>(),
+                Array.Empty<IPasswordValidator<User>>(),
+                Mock.Of<ILookupNormalizer>(),
+                new IdentityErrorDescriber(),
+                Mock.Of<IServiceProvider>(),
+                Mock.Of<ILogger<UserManager<User>>>());
+
         _service =
-            new UserService(_unitOfWorkMock.Object);
+            new UserService(
+                _unitOfWorkMock.Object,
+                _userManagerMock.Object);
     }
+
+    // GET BY ID
 
     [Fact]
     public async Task GetByIdAsync_ReturnsUser_WhenUserExists()
@@ -69,6 +94,8 @@ public class UserServiceUnitTests
             Times.Once);
     }
 
+    // GET ALL
+
     [Fact]
     public async Task GetAllAsync_ReturnsAllUsers()
     {
@@ -100,6 +127,8 @@ public class UserServiceUnitTests
             x => x.GetAllAsync(),
             Times.Once);
     }
+
+    // GET BY EMAIL
 
     [Fact]
     public async Task GetByEmailAsync_ReturnsUser_WhenUserExists()
@@ -142,36 +171,7 @@ public class UserServiceUnitTests
             Times.Once);
     }
 
-    [Fact]
-    public async Task CreateAsync_AddsUserAndSavesChanges()
-    {
-        User user = new User
-        {
-            Id = 1,
-            Email = "test@test.com"
-        };
-
-        _userRepositoryMock
-            .Setup(x => x.AddAsync(user))
-            .Returns(Task.CompletedTask);
-
-        _unitOfWorkMock
-            .Setup(x => x.SaveChangesAsync())
-            .ReturnsAsync(1);
-
-        User result =
-            await _service.CreateAsync(user);
-
-        Assert.Equal(user, result);
-
-        _userRepositoryMock.Verify(
-            x => x.AddAsync(user),
-            Times.Once);
-
-        _unitOfWorkMock.Verify(
-            x => x.SaveChangesAsync(),
-            Times.Once);
-    }
+    // UPDATE
 
     [Fact]
     public async Task UpdateAsync_UpdatesUser_WhenUserExists()
@@ -179,39 +179,131 @@ public class UserServiceUnitTests
         User existingUser = new User
         {
             Id = 1,
-            Email = "old@test.com"
+            FirstName = "Old",
+            LastName = "Name",
+            Email = "test@test.com",
+            IsActive = true
         };
 
         User updateUser = new User
         {
             Id = 1,
-            Email = "new@test.com"
+            FirstName = "New",
+            LastName = "Name",
+            Email = "test@test.com",
+            IsActive = true
         };
 
-        _userRepositoryMock
-            .Setup(x => x.GetByIdAsync(1))
+        _userManagerMock
+            .Setup(x => x.FindByIdAsync("1"))
             .ReturnsAsync(existingUser);
 
-        _unitOfWorkMock
-            .Setup(x => x.SaveChangesAsync())
-            .ReturnsAsync(1);
+        _userManagerMock
+            .Setup(x => x.IsInRoleAsync(
+                existingUser,
+                UserRoles.Admin))
+            .ReturnsAsync(false);
+
+        _userManagerMock
+            .Setup(x => x.UpdateAsync(existingUser))
+            .ReturnsAsync(IdentityResult.Success);
 
         User? result =
             await _service.UpdateAsync(1, updateUser);
 
         Assert.NotNull(result);
-        Assert.Equal(updateUser, result);
+        Assert.Equal("New", result.FirstName);
+        Assert.Equal("Name", result.LastName);
+        Assert.Equal("test@test.com", result.Email);
+        Assert.NotEqual(default, result.UpdatedAt);
 
-        _userRepositoryMock.Verify(
-            x => x.GetByIdAsync(1),
+        _userManagerMock.Verify(
+            x => x.FindByIdAsync("1"),
             Times.Once);
 
-        _userRepositoryMock.Verify(
-            x => x.Update(updateUser),
+        _userManagerMock.Verify(
+            x => x.UpdateAsync(existingUser),
             Times.Once);
 
-        _unitOfWorkMock.Verify(
-            x => x.SaveChangesAsync(),
+        _userManagerMock.Verify(
+            x => x.SetEmailAsync(
+                It.IsAny<User>(),
+                It.IsAny<string>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_UpdatesEmail_WhenEmailChanges()
+    {
+        User existingUser = new User
+        {
+            Id = 1,
+            Email = "old@test.com",
+            IsActive = true
+        };
+
+        User updateUser = new User
+        {
+            Id = 1,
+            Email = "new@test.com",
+            IsActive = true
+        };
+
+        _userManagerMock
+            .Setup(x => x.FindByIdAsync("1"))
+            .ReturnsAsync(existingUser);
+
+        _userManagerMock
+            .Setup(x => x.IsInRoleAsync(
+                existingUser,
+                UserRoles.Admin))
+            .ReturnsAsync(false);
+
+        //_userManagerMock
+        //    .Setup(x => x.SetEmailAsync(
+        //        existingUser,
+        //        "new@test.com"))
+        //    .ReturnsAsync(IdentityResult.Success);
+        _userManagerMock
+    .Setup(x => x.SetEmailAsync(
+        existingUser,
+        "new@test.com"))
+    .Callback<User, string>((user, email) =>
+    {
+        user.Email = email;
+    })
+    .ReturnsAsync(IdentityResult.Success);
+
+        _userManagerMock
+            .Setup(x => x.SetUserNameAsync(
+                existingUser,
+                "new@test.com"))
+            .ReturnsAsync(IdentityResult.Success);
+
+        _userManagerMock
+            .Setup(x => x.UpdateAsync(existingUser))
+            .ReturnsAsync(IdentityResult.Success);
+
+        User? result =
+            await _service.UpdateAsync(1, updateUser);
+
+        Assert.NotNull(result);
+        Assert.Equal("new@test.com", result.Email);
+
+        _userManagerMock.Verify(
+            x => x.SetEmailAsync(
+                existingUser,
+                "new@test.com"),
+            Times.Once);
+
+        _userManagerMock.Verify(
+            x => x.SetUserNameAsync(
+                existingUser,
+                "new@test.com"),
+            Times.Once);
+
+        _userManagerMock.Verify(
+            x => x.UpdateAsync(existingUser),
             Times.Once);
     }
 
@@ -224,8 +316,8 @@ public class UserServiceUnitTests
             Email = "new@test.com"
         };
 
-        _userRepositoryMock
-            .Setup(x => x.GetByIdAsync(1))
+        _userManagerMock
+            .Setup(x => x.FindByIdAsync("1"))
             .ReturnsAsync((User?)null);
 
         User? result =
@@ -233,59 +325,103 @@ public class UserServiceUnitTests
 
         Assert.Null(result);
 
-        _userRepositoryMock.Verify(
-            x => x.GetByIdAsync(1),
-            Times.Once);
-
-        _userRepositoryMock.Verify(
-            x => x.Update(It.IsAny<User>()),
-            Times.Never);
-
-        _unitOfWorkMock.Verify(
-            x => x.SaveChangesAsync(),
+        _userManagerMock.Verify(
+            x => x.UpdateAsync(It.IsAny<User>()),
             Times.Never);
     }
 
     [Fact]
-    public async Task DeleteAsync_ReturnsTrueAndDeletesUser_WhenUserExists()
+    public async Task UpdateAsync_ThrowsException_WhenDeactivatingLastAdmin()
+    {
+        User admin = new User
+        {
+            Id = 1,
+            Email = "admin@test.com",
+            IsActive = true
+        };
+
+        User updateUser = new User
+        {
+            Id = 1,
+            Email = "admin@test.com",
+            IsActive = false
+        };
+
+        _userManagerMock
+            .Setup(x => x.FindByIdAsync("1"))
+            .ReturnsAsync(admin);
+
+        _userManagerMock
+            .Setup(x => x.IsInRoleAsync(
+                admin,
+                UserRoles.Admin))
+            .ReturnsAsync(true);
+
+        _userManagerMock
+            .Setup(x => x.GetUsersInRoleAsync(UserRoles.Admin))
+            .ReturnsAsync((IList<User>)new List<User>
+            {
+                admin
+            });
+
+        InvalidOperationException exception =
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => _service.UpdateAsync(1, updateUser));
+
+        Assert.Equal(
+            "The last active administrator cannot be deactivated.",
+            exception.Message);
+
+        _userManagerMock.Verify(
+            x => x.UpdateAsync(It.IsAny<User>()),
+            Times.Never);
+    }
+
+    // DELETE
+
+    [Fact]
+    public async Task DeleteAsync_ReturnsTrue_WhenUserIsDeleted()
     {
         User user = new User
         {
             Id = 1,
-            Email = "test@test.com"
+            Email = "test@test.com",
+            IsActive = true
         };
 
-        _userRepositoryMock
-            .Setup(x => x.GetByIdAsync(1))
+        _userManagerMock
+            .Setup(x => x.FindByIdAsync("1"))
             .ReturnsAsync(user);
 
-        _unitOfWorkMock
-            .Setup(x => x.SaveChangesAsync())
-            .ReturnsAsync(1);
+        _userManagerMock
+            .Setup(x => x.IsInRoleAsync(
+                user,
+                UserRoles.Admin))
+            .ReturnsAsync(false);
+
+        _userManagerMock
+            .Setup(x => x.DeleteAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
 
         bool result =
             await _service.DeleteAsync(1);
 
         Assert.True(result);
 
-        _userRepositoryMock.Verify(
-            x => x.GetByIdAsync(1),
+        _userManagerMock.Verify(
+            x => x.FindByIdAsync("1"),
             Times.Once);
 
-        _userRepositoryMock.Verify(
-            x => x.Delete(user),
-            Times.Once);
-
-        _unitOfWorkMock.Verify(
-            x => x.SaveChangesAsync(),
+        _userManagerMock.Verify(
+            x => x.DeleteAsync(user),
             Times.Once);
     }
 
     [Fact]
     public async Task DeleteAsync_ReturnsFalse_WhenUserDoesNotExist()
     {
-        _userRepositoryMock
-            .Setup(x => x.GetByIdAsync(1))
+        _userManagerMock
+            .Setup(x => x.FindByIdAsync("1"))
             .ReturnsAsync((User?)null);
 
         bool result =
@@ -293,16 +429,48 @@ public class UserServiceUnitTests
 
         Assert.False(result);
 
-        _userRepositoryMock.Verify(
-            x => x.GetByIdAsync(1),
-            Times.Once);
-
-        _userRepositoryMock.Verify(
-            x => x.Delete(It.IsAny<User>()),
+        _userManagerMock.Verify(
+            x => x.DeleteAsync(It.IsAny<User>()),
             Times.Never);
+    }
 
-        _unitOfWorkMock.Verify(
-            x => x.SaveChangesAsync(),
+    [Fact]
+    public async Task DeleteAsync_ThrowsException_WhenDeletingLastActiveAdmin()
+    {
+        User admin = new User
+        {
+            Id = 1,
+            Email = "admin@test.com",
+            IsActive = true
+        };
+
+        _userManagerMock
+            .Setup(x => x.FindByIdAsync("1"))
+            .ReturnsAsync(admin);
+
+        _userManagerMock
+            .Setup(x => x.IsInRoleAsync(
+                admin,
+                UserRoles.Admin))
+            .ReturnsAsync(true);
+
+        _userManagerMock
+            .Setup(x => x.GetUsersInRoleAsync(UserRoles.Admin))
+            .ReturnsAsync((IList<User>)new List<User>
+            {
+                admin
+            });
+
+        InvalidOperationException exception =
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => _service.DeleteAsync(1));
+
+        Assert.Equal(
+            "The last active administrator cannot be deleted.",
+            exception.Message);
+
+        _userManagerMock.Verify(
+            x => x.DeleteAsync(It.IsAny<User>()),
             Times.Never);
     }
 }

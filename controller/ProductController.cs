@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using webShop2.dto.productDto;
 using webShop2.dto.ProductDto;
 using webShop2.mapper;
@@ -14,7 +16,6 @@ public class ProductController : ControllerBase
     private readonly IProductService _service;
     private readonly ProductMapper _mapper;
 
-
     public ProductController(
         IProductService service,
         ProductMapper mapper)
@@ -23,46 +24,57 @@ public class ProductController : ControllerBase
         _mapper = mapper;
     }
 
+    [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<List<ProductDto>>> GetAll()
+    public async Task<ActionResult<PagedResult<ProductDto>>> GetAll(
+        int page = 1,
+        int pageSize = 10)
     {
-        List<Product> products =
-            await _service.GetAllAsync();
-
-
-        List<ProductDto> dto =
-            new List<ProductDto>();
-
-        foreach (Product product in products)
+        if (page < 1 || pageSize < 1 || pageSize > 100)
         {
-            dto.Add(_mapper.ToDto(product));
+            return BadRequest("Invalid pagination parameters.");
         }
+
+        PagedResult<Product> result =
+            await _service.GetAllAsync(page, pageSize);
+
+        PagedResult<ProductDto> dto =
+            new PagedResult<ProductDto>
+            {
+                Items = result.Items
+                    .Select(x => _mapper.ToDto(x))
+                    .ToList(),
+
+                TotalCount = result.TotalCount,
+                Page = result.Page,
+                PageSize = result.PageSize
+            };
+
         return Ok(dto);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<ProductDto>> GetById(int id)
     {
-        Product? product =
-            await _service.GetByIdAsync(id);
+        Product? product = await _service.GetByIdAsync(id);
 
         if (product == null)
         {
             return NotFound();
         }
 
-        ProductDto dto =
-            _mapper.ToDto(product);
+        ProductDto dto = _mapper.ToDto(product);
 
         return Ok(dto);
     }
 
-
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(30_000_000)]
     public async Task<ActionResult<ProductDto>> Create(
-     [FromForm] CreateProductDto dto)
+        [FromForm] CreateProductDto dto)
     {
         Product productCreate = _mapper.ToEntity(dto);
 
@@ -99,30 +111,31 @@ public class ProductController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ProductDto>> Update(
-        int id,
-        UpdateProductDto dto)
+    int id,
+    [FromBody] UpdateProductDto dto)
     {
         Product productUpdate = _mapper.ToEntityUpdate(dto);
 
-        Product? product = await _service.UpdateAsync(id, productUpdate);
+        Product? product =
+            await _service.UpdateAsync(id, productUpdate);
 
         if (product == null)
         {
             return NotFound();
         }
 
-        ProductDto productDto =
-            _mapper.ToDto(product);
+        ProductDto productDto = _mapper.ToDto(product);
 
         return Ok(productDto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        bool deleted =
-            await _service.DeleteAsync(id);
+        bool deleted = await _service.DeleteAsync(id);
 
         if (!deleted)
         {

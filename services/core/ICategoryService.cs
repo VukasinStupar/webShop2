@@ -1,5 +1,6 @@
 ﻿using webShop2.dto.category;
 using webShop2.model;
+using webShop2.dto.category;
 
 namespace webShop2.services.core;
 
@@ -13,4 +14,5 @@ public interface ICategoryService
     Task<Category> CreateAsync(Category category);
     Task<Category?> UpdateAsync(int id, Category updateCategory);
     Task<bool> DeleteAsync(int id);
+    Task<List<CategoryStatsDto>> GetCategoryStatisticsAsync();
 }

@@ -12,9 +12,10 @@ namespace webShop2.repository.core
 
         Task<Product?> GetByIdWithImagesAsync(int id);
 
-        Task<List<Product>> GetAllWithImagesAsync();
+        Task<List<Product>> GetAllWithImagesAsync(int page, int pageSize);
+
+        Task<int> GetTotalCountAsync();
 
 
-       
     }
 }

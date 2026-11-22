@@ -41,11 +41,20 @@ namespace webShop2.repository
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Product>> GetAllWithImagesAsync()
+        public async Task<List<Product>> GetAllWithImagesAsync(int page, int pageSize)
         {
             return await _dbSet
+                .AsNoTracking()
                 .Include(x => x.Images.OrderBy(i => i.SortOrder))
+                .OrderBy(x => x.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+        }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            return await _dbSet.CountAsync();
         }
     }
 }

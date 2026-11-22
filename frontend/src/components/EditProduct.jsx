@@ -3,6 +3,15 @@ import { useState } from "react";
 import apiUrl from "../api";
 import "./EditProduct.css";
 
+import {
+    CustomButton,
+    CustomInput,
+    CustomTextarea,
+    CustomSelect
+} from "../customComponents/customComponents";
+
+import { useAuth } from "../context/AuthContext";
+
 const STATUSES = ["ACTIVE", "INACTIVE", "SOLD"];
 
 function EditProduct({ product, categories, onSaved, onClose }) {
@@ -16,10 +25,16 @@ function EditProduct({ product, categories, onSaved, onClose }) {
     const [categoryId, setCategoryId] = useState(String(product.categoryId ?? ""));
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const { token, isAdmin } = useAuth();
 
     async function handleSubmit(event) {
         event.preventDefault();
         setError("");
+
+        if (!isAdmin || !token) {
+            setError("Nemate dozvolu za ovu operaciju.");
+            return;
+        }
 
         if (name.trim().length < 2) {
             setError("Naziv mora imati najmanje 2 karaktera.");
@@ -51,7 +66,10 @@ function EditProduct({ product, categories, onSaved, onClose }) {
         try {
             const response = await fetch(`${apiUrl}/api/Product/${product.id}`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
                 body: JSON.stringify({
                     name: name.trim(),
                     description: description.trim(),
@@ -61,7 +79,6 @@ function EditProduct({ product, categories, onSaved, onClose }) {
                     categoryId: Number(categoryId)
                 })
             });
-
             if (!response.ok) {
                 let message = `Greška pri izmeni proizvoda: ${response.status}`;
 
@@ -102,36 +119,31 @@ function EditProduct({ product, categories, onSaved, onClose }) {
                 <div className="edit-product__header">
                     <h2 id="edit-product-title">Izmeni proizvod</h2>
 
-                    <button
+                    <CustomButton
                         type="button"
                         className="edit-product__close"
                         onClick={onClose}
                         disabled={loading}
-                        aria-label="Zatvori formu"
                     >
                         ×
-                    </button>
+                    </CustomButton>
                 </div>
 
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="edit-name">Naziv proizvoda</label>
-                    <input
-                        id="edit-name"
+                    <CustomInput
                         type="text"
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        minLength={2}
-                        maxLength={150}
+                        onChange={setName}
+                        min={undefined}
+                        max={undefined}
                         required
                     />
 
                     <label htmlFor="edit-description">Opis proizvoda</label>
-                    <textarea
-                        id="edit-description"
+                    <CustomTextarea
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        minLength={2}
-                        maxLength={2000}
+                        onChange={setDescription}
                         rows={5}
                         required
                     />
@@ -139,62 +151,52 @@ function EditProduct({ product, categories, onSaved, onClose }) {
                     <div className="edit-product__row">
                         <div>
                             <label htmlFor="edit-price">Cena</label>
-                            <input
-                                id="edit-price"
+                            <CustomInput
                                 type="number"
                                 min="0"
                                 step="0.01"
                                 value={price}
-                                onChange={(e) => setPrice(e.target.value)}
+                                onChange={setPrice}
                                 required
                             />
                         </div>
 
                         <div>
                             <label htmlFor="edit-quantity">Količina</label>
-                            <input
-                                id="edit-quantity"
+                            <CustomInput
                                 type="number"
                                 min="0"
                                 step="1"
                                 value={quantity}
-                                onChange={(e) => setQuantity(e.target.value)}
+                                onChange={setQuantity}
                                 required
                             />
                         </div>
                     </div>
 
                     <label htmlFor="edit-status">Status</label>
-                    <select
-                        id="edit-status"
+                    <CustomSelect
                         value={status}
-                        onChange={(e) => setStatus(e.target.value)}
+                        onChange={setStatus}
+                        placeholder="Izaberi status"
+                        options={STATUSES.map((s) => ({
+                            value: s,
+                            label: s
+                        }))}
                         required
-                    >
-                        <option value="">Izaberi status</option>
-
-                        {STATUSES.map((s) => (
-                            <option key={s} value={s}>
-                                {s}
-                            </option>
-                        ))}
-                    </select>
+                    />
 
                     <label htmlFor="edit-category">Kategorija</label>
-                    <select
-                        id="edit-category"
+                    <CustomSelect
                         value={categoryId}
-                        onChange={(e) => setCategoryId(e.target.value)}
+                        onChange={setCategoryId}
+                        placeholder="Izaberi kategoriju"
+                        options={categories.map((category) => ({
+                            value: String(category.id),
+                            label: category.name
+                        }))}
                         required
-                    >
-                        <option value="">Izaberi kategoriju</option>
-
-                        {categories.map((category) => (
-                            <option key={category.id} value={category.id}>
-                                {category.name}
-                            </option>
-                        ))}
-                    </select>
+                    />
 
                     {error && (
                         <p className="edit-product__error" role="alert">
@@ -203,22 +205,22 @@ function EditProduct({ product, categories, onSaved, onClose }) {
                     )}
 
                     <div className="edit-product__actions">
-                        <button
+                        <CustomButton
                             type="button"
                             className="edit-product__cancel"
                             onClick={onClose}
                             disabled={loading}
                         >
                             Otkaži
-                        </button>
+                        </CustomButton>
 
-                        <button
+                        <CustomButton
                             type="submit"
                             className="edit-product__submit"
                             disabled={loading}
                         >
                             {loading ? "Čuvanje..." : "Sačuvaj izmene"}
-                        </button>
+                        </CustomButton>
                     </div>
                 </form>
             </section>

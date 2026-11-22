@@ -1,5 +1,6 @@
 ﻿
 import "./FilterSidebar.css";
+import { CustomSelect } from "../customComponents/customComponents";
 
 function FilterSidebar({
     categories,
@@ -25,22 +26,18 @@ function FilterSidebar({
                     Kategorija
                 </label>
 
-                <select
+                <CustomSelect
                     className="filter-sidebar__select"
-                    id="filter-category"
                     value={selectedCategory}
-                    onChange={(event) =>
-                        onCategoryChange(event.target.value)
-                    }
-                >
-                    <option value="Sve kategorije">Sve kategorije</option>
-
-                    {(categories ?? []).map((category) => (
-                        <option key={category.id} value={category.name}>
-                            {category.name}
-                        </option>
-                    ))}
-                </select>
+                    onChange={onCategoryChange}
+                    options={[
+                        { value: "Sve kategorije", label: "Sve kategorije" },
+                        ...(categories ?? []).map((category) => ({
+                            value: category.name,
+                            label: category.name
+                        }))
+                    ]}
+                />
             </div>
 
             <div className="filter-sidebar__section">
@@ -51,21 +48,23 @@ function FilterSidebar({
                     Sortiranje
                 </label>
 
-                <select
+                <CustomSelect
                     className="filter-sidebar__select"
-                    id="filter-sort"
                     value={sortBy}
-                    onChange={(event) => onSortChange(event.target.value)}
-                >
-                    <option value="recommended">Preporučeno</option>
-                    <option value="price-asc">
-                        Cena: od niže ka višoj
-                    </option>
-                    <option value="price-desc">
-                        Cena: od više ka nižoj
-                    </option>
-                    <option value="newest">Najnovije</option>
-                </select>
+                    onChange={onSortChange}
+                    options={[
+                        { value: "recommended", label: "Preporučeno" },
+                        {
+                            value: "price-asc",
+                            label: "Cena: od niže ka višoj"
+                        },
+                        {
+                            value: "price-desc",
+                            label: "Cena: od više ka nižoj"
+                        },
+                        { value: "newest", label: "Najnovije" }
+                    ]}
+                />
             </div>
 
             <div className="filter-sidebar__info">

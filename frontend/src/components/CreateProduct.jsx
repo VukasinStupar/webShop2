@@ -3,6 +3,15 @@ import { useEffect, useState } from "react";
 import apiUrl from "../api";
 import "./CreateProduct.css";
 
+import {
+    CustomButton,
+    CustomInput,
+    CustomTextarea,
+    CustomSelect
+} from "../customComponents/customComponents";
+
+import { useAuth } from "../context/AuthContext";
+
 const MAX_IMAGES = 15;
 
 function CreateProduct({ categories, onCreated, onClose }) {
@@ -14,7 +23,7 @@ function CreateProduct({ categories, onCreated, onClose }) {
     const [images, setImages] = useState([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    
+    const { token, isAdmin } = useAuth();
 
     useEffect(() => {
         return () => {
@@ -65,9 +74,16 @@ function CreateProduct({ categories, onCreated, onClose }) {
         );
     }
 
+    
     async function handleSubmit(event) {
         event.preventDefault();
         setError("");
+
+        if (!isAdmin || !token) {
+            setError("Nemate dozvolu za ovu operaciju.");
+            return;
+        }
+
 
         if (!name.trim() || name.trim().length < 2) {
             setError("Naziv mora imati najmanje 2 karaktera.");
@@ -119,6 +135,9 @@ function CreateProduct({ categories, onCreated, onClose }) {
         try {
             const response = await fetch(`${apiUrl}/api/Product`, {
                 method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
                 body: formData
             });
 
@@ -172,42 +191,33 @@ function CreateProduct({ categories, onCreated, onClose }) {
                         Dodaj proizvod
                     </h2>
 
-                    <button
+                    <CustomButton
                         type="button"
                         className="create-product__close"
                         onClick={onClose}
                         disabled={loading}
-                        aria-label="Zatvori formu"
                     >
                         ×
-                    </button>
+                    </CustomButton>
                 </div>
 
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="product-name">
                         Naziv proizvoda
                     </label>
-                    <input
-                        id="product-name"
+                    <CustomInput
                         type="text"
                         value={name}
-                        onChange={(event) => setName(event.target.value)}
-                        minLength={2}
-                        maxLength={150}
+                        onChange={setName}
                         required
                     />
 
                     <label htmlFor="product-description">
                         Opis proizvoda
                     </label>
-                    <textarea
-                        id="product-description"
+                    <CustomTextarea
                         value={description}
-                        onChange={(event) =>
-                            setDescription(event.target.value)
-                        }
-                        minLength={2}
-                        maxLength={2000}
+                        onChange={setDescription}
                         rows={5}
                         required
                     />
@@ -217,15 +227,12 @@ function CreateProduct({ categories, onCreated, onClose }) {
                             <label htmlFor="product-price">
                                 Cena
                             </label>
-                            <input
-                                id="product-price"
+                            <CustomInput
                                 type="number"
                                 min="0"
                                 step="0.01"
                                 value={price}
-                                onChange={(event) =>
-                                    setPrice(event.target.value)
-                                }
+                                onChange={setPrice}
                                 required
                             />
                         </div>
@@ -247,43 +254,31 @@ function CreateProduct({ categories, onCreated, onClose }) {
                             />
                         </div> */}
                         <div>
-    <label htmlFor="product-quantity">
-        Količina
-    </label>
-    <input
-        id="product-quantity"
-        type="number"
-        value="1"
-        disabled
-        readOnly
-    />
-</div>
+                            <label htmlFor="product-quantity">
+                                Količina
+                            </label>
+                            <CustomInput
+                                type="number"
+                                value="1"
+                                onChange={() => {}}
+                                disabled
+                            />
+                        </div>
                     </div>
 
                     <label htmlFor="product-category">
                         Kategorija
                     </label>
-                    <select
-                        id="product-category"
+                    <CustomSelect
                         value={categoryId}
-                        onChange={(event) =>
-                            setCategoryId(event.target.value)
-                        }
+                        onChange={setCategoryId}
+                        placeholder="Izaberi kategoriju"
+                        options={categories.map((category) => ({
+                            value: String(category.id),
+                            label: category.name
+                        }))}
                         required
-                    >
-                        <option value="">
-                            Izaberi kategoriju
-                        </option>
-
-                        {categories.map((category) => (
-                            <option
-                                key={category.id}
-                                value={category.id}
-                            >
-                                {category.name}
-                            </option>
-                        ))}
-                    </select>
+                    />
 
                     <div className="create-product__image-heading">
                         <label htmlFor="product-images">
@@ -320,14 +315,13 @@ function CreateProduct({ categories, onCreated, onClose }) {
                                         alt={`Pregled slike ${index + 1}`}
                                     />
 
-                                    <button
+                                    <CustomButton
                                         type="button"
                                         onClick={() => removeImage(index)}
                                         disabled={loading}
-                                        aria-label={`Ukloni sliku ${index + 1}`}
                                     >
                                         ×
-                                    </button>
+                                    </CustomButton>
                                 </div>
                             ))}
                         </div>
@@ -343,16 +337,16 @@ function CreateProduct({ categories, onCreated, onClose }) {
                     )}
 
                     <div className="create-product__actions">
-                        <button
+                        <CustomButton
                             type="button"
                             className="create-product__cancel"
                             onClick={onClose}
                             disabled={loading}
                         >
                             Otkaži
-                        </button>
+                        </CustomButton>
 
-                        <button
+                        <CustomButton
                             type="submit"
                             className="create-product__submit"
                             disabled={loading}
@@ -360,7 +354,7 @@ function CreateProduct({ categories, onCreated, onClose }) {
                             {loading
                                 ? "Kreiranje..."
                                 : "Kreiraj proizvod"}
-                        </button>
+                        </CustomButton>
                     </div>
                 </form>
             </section>

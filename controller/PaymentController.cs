@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using webShop2.dto.payment;
 using webShop2.mapper;
 using webShop2.model;
@@ -88,6 +89,7 @@ public class PaymentController : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<PaymentDto>> Create(
         CreatePaymentDto dto)
@@ -107,6 +109,7 @@ public class PaymentController : ControllerBase
             paymentDto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<ActionResult<PaymentDto>> Update(
         int id,
@@ -127,6 +130,7 @@ public class PaymentController : ControllerBase
         return Ok(paymentDto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

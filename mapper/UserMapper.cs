@@ -1,37 +1,29 @@
-﻿using webShop2.dto.user;
+﻿
+using webShop2.dto.user;
 using webShop2.model;
 
-namespace webShop2.mapper;
-
-public class UserMapper
+namespace webShop2.mapper
 {
-    public UserDto ToDto(User user)
+    public class UserMapper
     {
-        return new UserDto
+        public UserDto ToDto(User user)
         {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            IsActive = user.IsActive
-        };
-    }
+            return new UserDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email ?? string.Empty,
+                IsActive = user.IsActive
+            };
+        }
 
-    public User ToEntity(CreateUserDto dto)
-    {
-        return new User
+        public void UpdateEntity(User user, UpdateUserDto dto)
         {
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Email = dto.Email
-        };
-    }
-
-    public void UpdateEntity(User user, UpdateUserDto dto)
-    {
-        user.FirstName = dto.FirstName;
-        user.LastName = dto.LastName;
-        user.Email = dto.Email;
-        user.IsActive = dto.IsActive;
+            user.FirstName = dto.FirstName;
+            user.LastName = dto.LastName;
+            user.Email = dto.Email;
+            user.IsActive = dto.IsActive;
+        }
     }
 }

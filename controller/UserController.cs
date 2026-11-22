@@ -1,13 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using webShop2.dto.user;
 using webShop2.mapper;
 using webShop2.model;
+using webShop2.model.enums;
 using webShop2.services.core;
 
 namespace webShop2.controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = UserRoles.Admin)]
 public class UserController : ControllerBase
 {
     private readonly IUserService _service;
@@ -73,35 +77,21 @@ public class UserController : ControllerBase
         return Ok(dto);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<UserDto>> Create(
-        CreateUserDto dto)
-    {
-        User userCreate =
-            _mapper.ToEntity(dto);
-
-        User user =
-            await _service.CreateAsync(userCreate);
-
-        UserDto userDto =
-            _mapper.ToDto(user);
-
-        return CreatedAtAction(
-            nameof(GetById),
-            new { id = userDto.Id },
-            userDto);
-    }
-
     [HttpPut("{id}")]
     public async Task<ActionResult<UserDto>> Update(
         int id,
-        CreateUserDto dto)
+        UpdateUserDto dto)
     {
-        User userUpdate =
-            _mapper.ToEntity(dto);
-
         User? user =
-            await _service.UpdateAsync(id, userUpdate);
+            await _service.UpdateAsync(
+                id,
+                new User
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Email = dto.Email,
+                    IsActive = dto.IsActive
+                });
 
         if (user == null)
         {

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using webShop2.dto.category;
 using webShop2.mapper;
 using webShop2.model;
 using webShop2.services.core;
+using webShop2.dto.category;
 
 namespace webShop2.controllers;
 
@@ -39,7 +41,7 @@ public class CategoryController : ControllerBase
         return Ok(categoriesDto);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<CategoryDto>> GetById(int id)
     {
         Category? category =
@@ -95,6 +97,7 @@ public class CategoryController : ControllerBase
         return Ok(categoriesDto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<CategoryDto>> Create(
         CreateCategoryDto dto)
@@ -138,6 +141,7 @@ public class CategoryController : ControllerBase
         return Ok(categoryDto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -150,5 +154,15 @@ public class CategoryController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("statistics")]
+    public async Task<ActionResult<List<CategoryStatsDto>>> GetCategoryStatistics()
+    {
+        List<CategoryStatsDto> statistics =
+            await _service.GetCategoryStatisticsAsync();
+
+        return Ok(statistics);
     }
 }

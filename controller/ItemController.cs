@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using webShop2.dto.item;
 using webShop2.mapper;
 using webShop2.model;
@@ -87,6 +88,7 @@ public class ItemController : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<ItemDto>> Create(
         CreateItemDto dto)
@@ -106,6 +108,7 @@ public class ItemController : ControllerBase
             itemDto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<ActionResult<ItemDto>> Update(
         int id,
@@ -128,6 +131,7 @@ public class ItemController : ControllerBase
         return Ok(itemDto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

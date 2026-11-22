@@ -1,13 +1,15 @@
-﻿import { useCallback, useEffect, useRef, useState } from "react";
+﻿
+import { useCallback, useEffect, useRef, useState } from "react";
 import EmptyProducts from "./EmptyProducts";
 import ProductProfile from "./ProductProfile";
 import { getMainImage } from "../utils/images";
 import "./ProductList.css";
 import apiUrl from "../api";
 import EditProduct from "./EditProduct";
+import { CustomButton } from "../customComponents/customComponents";
 
-// IZMENJENO: za sada vidljivo svima; pre objave vratiti proveru (?admin=1)
-const isAdmin = true;
+import { useAuth } from "../context/AuthContext";
+
 
 function ProductList({
     search,
@@ -18,32 +20,46 @@ function ProductList({
     onDeleteProduct,
     onProductChanged
 }) {
+    const { isAdmin } = useAuth();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [selectedProductId, setSelectedProductId] = useState(null);
     const [editingProductId, setEditingProductId] = useState(null);
 
+    // Paginacija
+    const [page, setPage] = useState(1);
+    const [pageSize] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+
     const editingProduct =
         products.find((p) => p.id === editingProductId) ?? null;
 
     const productListRef = useRef(null);
 
-    const loadProducts = useCallback(async (silent = false) => {
+    const loadProducts = useCallback(async (silent = false, requestedPage = page) => {
         try {
             if (!silent) {
                 setLoading(true);
                 setError("");
             }
 
-            const response = await fetch(`${apiUrl}/api/Product`);
+            const response = await fetch(
+                `${apiUrl}/api/Product?page=${requestedPage}&pageSize=${pageSize}`
+            );
 
             if (!response.ok) {
                 throw new Error("Neuspešno učitavanje proizvoda.");
             }
 
             const data = await response.json();
-            setProducts(data);
+
+            setProducts(data.items ?? []);
+            setTotalPages(data.totalPages ?? 1);
+            setTotalCount(data.totalCount ?? 0);
+            setPage(data.page ?? requestedPage);
+
         } catch (error) {
             if (!silent) {
                 setError(
@@ -55,26 +71,33 @@ function ProductList({
                 setLoading(false);
             }
         }
-    }, []);
+    }, [page, pageSize]);
 
     useEffect(() => {
-        loadProducts();
-    }, [loadProducts]);
+        loadProducts(false, page);
+    }, [page, loadProducts]);
 
-    // DODATO: brisanje proizvoda sa kartice
+    // Promena stranice
+    function handlePageChange(newPage) {
+        if (newPage < 1 || newPage > totalPages) {
+            return;
+        }
+
+        setPage(newPage);
+        setSelectedProductId(null);
+        setEditingProductId(null);
+    }
+
     async function handleDeleteClick(event, productId) {
-        // da klik na dugme ne otvori profil proizvoda
         event.stopPropagation();
 
         if (onDeleteProduct) {
             await onDeleteProduct(productId);
         }
 
-        // osvežava listu u ovoj komponenti
         loadProducts(true);
     }
 
-    // otvoreni proizvod se uvek uzima iz sveže liste
     const selectedProduct =
         products.find((p) => p.id === selectedProductId) ?? null;
 
@@ -88,6 +111,7 @@ function ProductList({
 
     const filteredProducts = products.filter((product) => {
         const productName = (product.name ?? "").toLocaleLowerCase("sr");
+
         const productDescription = (product.description ?? "")
             .toLocaleLowerCase("sr");
 
@@ -141,14 +165,6 @@ function ProductList({
 
     return (
         <div className="product-list" ref={productListRef}>
-            {/* <div className="product-list__toolbar">
-
-                {search.trim() && (
-                    <div className="product-list__search">
-                        Pretraga: <strong>{search.trim()}</strong>
-                    </div>
-                )}
-            </div> */}
 
             <div className="product-list__content">
                 {loading ? (
@@ -158,78 +174,109 @@ function ProductList({
                 ) : sortedProducts.length === 0 ? (
                     <EmptyProducts />
                 ) : (
-                    <div className="product-grid">
-                        {sortedProducts.map((product) => {
-                            const mainImage = getMainImage(product);
+                    <>
+                        <div className="product-grid">
+                            {sortedProducts.map((product) => {
+                                const mainImage = getMainImage(product);
 
-                            return (
-                                <article
-                                    className="product-card"
-                                    key={product.id}
-                                    onClick={() => setSelectedProductId(product.id)}
-                                    style={{ cursor: "pointer" }}
-                                >
-                                    {mainImage ? (
-                                        <img
-                                            className="product-card__image"
-                                            src={mainImage.url}
-                                            alt={product.name}
-                                            loading="lazy"
-                                        />
-                                    ) : (
-                                        <div className="product-card__image product-card__image--empty">
-                                            Nema slike
-                                        </div>
-                                    )}
+                                return (
+                                    <article
+                                        className="product-card"
+                                        key={product.id}
+                                        onClick={() => setSelectedProductId(product.id)}
+                                        style={{ cursor: "pointer" }}
+                                    >
+                                        {mainImage ? (
+                                            <img
+                                                className="product-card__image"
+                                                src={mainImage.url}
+                                                alt={product.name}
+                                                loading="lazy"
+                                            />
+                                        ) : (
+                                            <div className="product-card__image product-card__image--empty">
+                                                Nema slike
+                                            </div>
+                                        )}
 
-                                    <h3>{product.name}</h3>
+                                        <h3>{product.name}</h3>
 
-                                    <p>{product.description}</p>
+                                        <p>{product.description}</p>
 
-                                    {product.price == null
-                                        ? "Cena nije navedena"
-                                        : new Intl.NumberFormat("sr-RS", {
-                                            style: "currency",
-                                            currency: "EUR",
-                                        }).format(Number(product.price))}
+                                        {product.price == null
+                                            ? "Cena nije navedena"
+                                            : new Intl.NumberFormat("sr-RS", {
+                                                style: "currency",
+                                                currency: "EUR",
+                                            }).format(Number(product.price))}
 
-                                    <p>
-                                        Dostupna količina: {product.quantity}
-                                    </p>
+                                        <p>
+                                            Dostupna količina: {product.quantity}
+                                        </p>
 
-                                    <p>Status: {product.status}</p>
+                                        <p>Status: {product.status}</p>
 
-                                    {/* DODATO: dugmad za izmenu i brisanje proizvoda */}
-                                    {isAdmin && (
-                                        <div className="product-card__actions">
-                                            <button
-                                                type="button"
-                                                className="product-card__edit"
-                                                onClick={(event) => {
-                                                    event.stopPropagation();
-                                                    setEditingProductId(product.id);
-                                                }}
-                                            >
-                                                Izmeni proizvod
-                                            </button>
+                                        {isAdmin && (
+                                            <div className="product-card__actions">
 
-                                            {onDeleteProduct && (
-                                                <button
-                                                    type="button"
-                                                    className="product-card__delete"
-                                                    onClick={(event) =>
-                                                        handleDeleteClick(event, product.id)
-                                                    }
+                                                <CustomButton
+                                                    className="button-edit-product"
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        setEditingProductId(product.id);
+                                                    }}
                                                 >
-                                                    Obriši proizvod
-                                                </button>
-                                            )}
-                                        </div>
-                                    )}
-                                </article>
-                            );
-                        })}
-                    </div>
+                                                    Izmeni proizvod
+                                                </CustomButton>
+
+                                                {onDeleteProduct && (
+                                                    <CustomButton
+                                                        className="button-delete-product"
+                                                        onClick={(event) =>
+                                                            handleDeleteClick(event, product.id)
+                                                        }
+                                                    >
+                                                        Obriši proizvod
+                                                    </CustomButton>
+                                                )}
+
+                                            </div>
+                                        )}
+
+                                    </article>
+                                );
+                            })}
+                        </div>
+
+                        {/* PAGINACIJA */}
+                        {totalPages > 1 && (
+                            <div className="pagination">
+
+                                <CustomButton
+                                    disabled={page === 1}
+                                    onClick={() => handlePageChange(page - 1)}
+                                >
+                                    Prethodna
+                                </CustomButton>
+
+                                <span>
+                                    Stranica {page} od {totalPages}
+                                </span>
+
+                                <CustomButton
+                                    disabled={page === totalPages}
+                                    onClick={() => handlePageChange(page + 1)}
+                                >
+                                    Sledeća
+                                </CustomButton>
+
+                            </div>
+                        )}
+
+                        <p className="pagination-info">
+                            Ukupno proizvoda: {totalCount}
+                        </p>
+                    </>
                 )}
             </div>
 
@@ -242,7 +289,6 @@ function ProductList({
                 />
             )}
 
-            {/* DODATO: modal za izmenu proizvoda */}
             {editingProduct && (
                 <EditProduct
                     product={editingProduct}
@@ -255,6 +301,7 @@ function ProductList({
                     }}
                 />
             )}
+
         </div>
     );
 }

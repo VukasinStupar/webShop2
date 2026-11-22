@@ -6,3 +6,7 @@ WebShop2.backup
 *.backup
 *.dump
 .env
+
+**/node_modules/
+frontend/dist/
+project-structure.txt

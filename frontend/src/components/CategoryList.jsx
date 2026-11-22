@@ -1,5 +1,6 @@
 ﻿
 import "./CategoryList.css";
+import { CustomButton } from "../customComponents/customComponents";
 
 function CategoryList({
     categories,
@@ -37,7 +38,7 @@ function CategoryList({
 
             <div className="category-list__items categoryListItemsMobile categoryListItemsNormal">
                 {allCategories.map((category) => (
-                    <button
+                    <CustomButton
                         className={[
                             "category-list__item",
                             selectedCategory === category.name
@@ -47,7 +48,7 @@ function CategoryList({
                         key={category.id}
                         type="button"
                         onClick={() => onCategoryChange(category.name)}
-                        aria-pressed={selectedCategory === category.name}
+                        ariaPressed={selectedCategory === category.name}
                     >
                         <span
                             className="category-list__icon"
@@ -66,7 +67,7 @@ function CategoryList({
                         >
                             →
                         </span>
-                    </button>
+                    </CustomButton>
                 ))}
             </div>
         </section>

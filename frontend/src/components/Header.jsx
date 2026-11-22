@@ -1,10 +1,76 @@
-﻿import "./Header.css";
+﻿
+import { useEffect, useState } from "react";
+import "./Header.css";
 import CategoryList from "./CategoryList";
 
-function Header({ search, onSearchChange, onAddProduct, categories, selectedCategory, onCategoryChange, sortBy, onSortChange }) {
+import {
+    CustomButton,
+    CustomSearch,
+    CustomSelect
+} from "../customComponents/customComponents";
+
+import { useAuth } from "../context/AuthContext";
+
+
+function Header({
+    search,
+    onSearchChange,
+    onAddProduct,
+    categories,
+    selectedCategory,
+    onCategoryChange,
+    sortBy,
+    onSortChange
+}) {
+    const [searchValue, setSearchValue] = useState(search ?? "");
+    const { isAdmin, logout } = useAuth();
+    // Sinhronizacija ako se pretraga promeni spolja
+    useEffect(() => {
+        setSearchValue(search ?? "");
+    }, [search]);
+
+    // Debounce pretrage - 400ms
+    useEffect(() => {
+        if (searchValue === (search ?? "")) {
+            return;
+        }
+
+        const timeoutId = setTimeout(() => {
+            onSearchChange(searchValue);
+        }, 400);
+
+        return () => {
+            clearTimeout(timeoutId);
+        };
+    }, [searchValue, search, onSearchChange]);
+
     function handleSubmit(event) {
         event.preventDefault();
     }
+
+    const categoryOptions = categories.map((cat) => ({
+        value: cat.name,
+        label: cat.name
+    }));
+
+    const sortOptions = [
+        {
+            value: "recommended",
+            label: "Preporučeno"
+        },
+        {
+            value: "price-asc",
+            label: "Cena: od niže ka višoj"
+        },
+        {
+            value: "price-desc",
+            label: "Cena: od više ka nižoj"
+        },
+        {
+            value: "newest",
+            label: "Najnovije"
+        }
+    ];
 
     return (
         <header className="site-header">
@@ -23,7 +89,7 @@ function Header({ search, onSearchChange, onAddProduct, categories, selectedCate
                             className="site-header__brand-phone"
                             href="tel:+381641360754"
                         >
-                                 +381 64 136 0754
+                            +381 64 136 0754
                         </a>
                     </div>
                 </div>
@@ -58,40 +124,48 @@ function Header({ search, onSearchChange, onAddProduct, categories, selectedCate
                     className="site-header__search"
                     onSubmit={handleSubmit}
                 >
-                    <span
-                        className="site-header__search-icon"
-                        aria-hidden="true"
-                    >
-                        ⌕
-                    </span>
-
-                    <input
+                    <CustomSearch
                         className="site-header__search-input"
-                        type="search"
-                        value={search}
-                        onChange={(event) =>
-                            onSearchChange(event.target.value)
-                        }
+                        value={searchValue}
+                        onChange={setSearchValue}
                         placeholder="Šta tražite?"
-                        aria-label="Pretraži proizvode"
                     />
 
-                    <button
+                    <CustomButton
                         className="site-header__search-button"
                         type="submit"
                     >
                         Pretraži
-                    </button>
+                    </CustomButton>
                 </form>
 
-                <button
+                {/* <CustomButton
                     className="site-header__add-product"
-                    type="button"
                     onClick={onAddProduct}
                 >
                     <span aria-hidden="true">+</span>
                     Dodaj proizvod
-                </button>
+                </CustomButton> */}
+
+                {isAdmin && (
+                    <CustomButton
+                        className="site-header__add-product"
+                        onClick={onAddProduct}
+                    >
+                        <span aria-hidden="true">+</span>
+                        Dodaj proizvod
+                    </CustomButton>
+                )}
+
+                {isAdmin && (
+                    <CustomButton
+                        className="site-header__logout"
+                        onClick={logout}
+                    >
+                        <span aria-hidden="true">↪</span>
+                        Odjavi se
+                    </CustomButton>
+                )}
             </div>
 
             <div className="site-header__categories">
@@ -109,21 +183,19 @@ function Header({ search, onSearchChange, onAddProduct, categories, selectedCate
                         Kategorija:
                     </label>
 
-                    <select
-                        className="site-header__sort-select "
-                        id="header-category"
+                    <CustomSelect
+                        className="site-header__sort-select"
                         value={selectedCategory}
-                        onChange={(event) =>
-                            onCategoryChange(event.target.value)
-                        }
-                    >
-                        <option value="Sve kategorije">Sve kategorije</option>
-                        {categories.map((cat) => (
-                            <option key={cat.id} value={cat.name}>
-                                {cat.name}
-                            </option>
-                        ))}
-                    </select>
+                        onChange={onCategoryChange}
+                        options={[
+                            {
+                                value: "Sve kategorije",
+                                label: "Sve kategorije"
+                            },
+                            ...categoryOptions
+                        ]}
+                        placeholder="Izaberi kategoriju"
+                    />
                 </div>
 
                 <div className="site-header__sort">
@@ -134,21 +206,13 @@ function Header({ search, onSearchChange, onAddProduct, categories, selectedCate
                         Sortiraj:
                     </label>
 
-                    <select
+                    <CustomSelect
                         className="site-header__sort-select"
-                        id="header-sort"
                         value={sortBy}
-                        onChange={(event) => onSortChange(event.target.value)}
-                    >
-                        <option value="recommended">Preporučeno</option>
-                        <option value="price-asc">
-                            Cena: od niže ka višoj
-                        </option>
-                        <option value="price-desc">
-                            Cena: od više ka nižoj
-                        </option>
-                        <option value="newest">Najnovije</option>
-                    </select>
+                        onChange={onSortChange}
+                        options={sortOptions}
+                        placeholder="Sortiraj"
+                    />
                 </div>
             </div>
         </header>

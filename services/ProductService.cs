@@ -35,9 +35,24 @@
             return product;
         }
 
-        public async Task<List<Product>> GetAllAsync()
+        //public async Task<List<Product>> GetAllAsync()
+        //{
+        //    return await _unitOfWork.Products.GetAllWithImagesAsync();
+        //}
+        public async Task<PagedResult<Product>> GetAllAsync(int page, int pageSize)
         {
-            return await _unitOfWork.Products.GetAllWithImagesAsync();
+            List<Product> products = await _unitOfWork.Products
+                .GetAllWithImagesAsync(page, pageSize);
+
+            int totalCount = await _unitOfWork.Products.GetTotalCountAsync();
+
+            return new PagedResult<Product>
+            {
+                Items = products,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            };
         }
 
 

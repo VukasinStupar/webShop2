@@ -2,6 +2,7 @@
 using webShop2.model;
 using webShop2.repository.core;
 using webShop2.services.core;
+using webShop2.dto.category;
 
 namespace webShop2.services;
 
@@ -80,4 +81,10 @@ public class CategoryService : ICategoryService
 
         return true;
     }
+
+    public async Task<List<CategoryStatsDto>> GetCategoryStatisticsAsync()
+    {
+        return await _unitOfWork.Categories.GetCategoryStatisticsAsync();
+    }
+
 }

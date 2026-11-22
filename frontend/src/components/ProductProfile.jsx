@@ -1,8 +1,18 @@
 
 import { useEffect, useRef, useState } from "react";
+
 import { getMainImage, sortImages } from "../utils/images";
+
 import apiUrl from "../api";
+
 import "./ProductProfile.css";
+
+import {
+    CustomButton,
+    CustomBadge
+} from "../customComponents/customComponents";
+
+import { useAuth } from "../context/AuthContext";
 
 const IMAGE_EXTENSIONS =
     /\.(jpe?g|jfif|png|gif|webp|bmp|tiff?|heic|heif|avif|svg)$/i;
@@ -51,9 +61,10 @@ async function getErrorMessage(response) {
 function ProductProfile({
     product,
     onClose,
-    onChanged,
-    isAdmin = false
+    onChanged
 }) {
+    const { token, isAdmin } = useAuth();
+
     const images = sortImages(product);
 
     const [selectedId, setSelectedId] = useState(null);
@@ -133,6 +144,11 @@ function ProductProfile({
     }, [copied]);
 
     async function runAction(action) {
+
+         if (!isAdmin || !token) {
+        setMessage("Nemate dozvolu za ovu operaciju.");
+        return;
+    }
         try {
             setBusy(true);
             setMessage("");
@@ -157,7 +173,10 @@ function ProductProfile({
             const response = await fetch(
                 `${apiUrl}/api/image/${selected.id}/main`,
                 {
-                    method: "PUT"
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
             );
 
@@ -188,7 +207,10 @@ function ProductProfile({
             const response = await fetch(
                 `${apiUrl}/api/image/${selected.id}`,
                 {
-                    method: "DELETE"
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
             );
 
@@ -205,6 +227,12 @@ function ProductProfile({
     }
 
     async function handleUpload(event) {
+
+         if (!isAdmin || !token) {
+        setMessage("Nemate dozvolu za ovu operaciju.");
+        return;
+    }
+    
         const files = Array.from(event.target.files ?? []);
 
         event.target.value = "";
@@ -258,6 +286,9 @@ function ProductProfile({
                             `${apiUrl}/api/image/upload/${product.id}`,
                             {
                                 method: "POST",
+                                headers: {
+                                    Authorization: `Bearer ${token}`
+                                },
                                 body: formData
                             }
                         );
@@ -327,8 +358,7 @@ function ProductProfile({
                 className="product-profile"
                 onClick={(event) => event.stopPropagation()}
             >
-                <button
-                    type="button"
+                <CustomButton
                     className="product-profile__close"
                     onClick={onClose}
                     aria-label="Zatvori"
@@ -344,9 +374,9 @@ function ProductProfile({
                             />
 
                             {selected.isMain && (
-                                <span className="product-profile__badge">
+                                <CustomBadge className="product-profile__badge">
                                     Profilna
-                                </span>
+                                </CustomBadge>
                             )}
                         </div>
                     ) : (
@@ -357,24 +387,22 @@ function ProductProfile({
 
                     {isAdmin && selected && (
                         <div className="product-profile__actions">
-                            <button
-                                type="button"
+                            <CustomButton
                                 disabled={busy || selected.isMain}
                                 onClick={handleSetMain}
                             >
                                 {selected.isMain
                                     ? "Ovo je profilna slika"
                                     : "Postavi kao profilnu"}
-                            </button>
+                            </CustomButton>
 
-                            <button
-                                type="button"
+                            <CustomButton
                                 className="product-profile__danger"
                                 disabled={busy}
                                 onClick={handleDelete}
                             >
                                 Obriši sliku
-                            </button>
+                            </CustomButton>
                         </div>
                     )}
 
@@ -402,9 +430,9 @@ function ProductProfile({
                                     />
 
                                     {img.isMain && (
-                                        <span className="product-profile__badge product-profile__badge--small">
+                                        <CustomBadge className="product-profile__badge product-profile__badge--small">
                                             Profilna
-                                        </span>
+                                        </CustomBadge>
                                     )}
                                 </div>
                             ))}
@@ -422,8 +450,7 @@ function ProductProfile({
                                 hidden
                             />
 
-                            <button
-                                type="button"
+                            <CustomButton
                                 disabled={busy}
                                 onClick={() =>
                                     fileInputRef.current?.click()
@@ -434,7 +461,7 @@ function ProductProfile({
                                     : busy
                                         ? "Sačekaj..."
                                         : "+ Dodaj slike"}
-                            </button>
+                            </CustomButton>
                         </div>
                     )}
 
@@ -480,13 +507,12 @@ function ProductProfile({
                             <strong>Firma:</strong> Duka Shop
                         </p>
 
-                        <button
-                            type="button"
+                        <CustomButton
                             className="product-profile__call"
                             onClick={handleCallClick}
                         >
                             Pozovite: {PHONE_DISPLAY}
-                        </button>
+                        </CustomButton>
 
                         {showPhone && (
                             <div className="product-profile__phone-box">
@@ -499,14 +525,13 @@ function ProductProfile({
                                         Pozovi
                                     </a>
 
-                                    <button
-                                        type="button"
+                                    <CustomButton
                                         onClick={handleCopyPhone}
                                     >
                                         {copied
                                             ? "Kopirano ✓"
                                             : "Kopiraj broj"}
-                                    </button>
+                                    </CustomButton>
                                 </div>
 
                                 <small>

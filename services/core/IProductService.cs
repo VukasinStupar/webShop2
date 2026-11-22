@@ -7,7 +7,8 @@ public interface IProductService
 {
     Task<Product?> GetByIdAsync(int id);
 
-    Task<List<Product>> GetAllAsync();
+    //Task<List<Product>> GetAllAsync();
+    Task<PagedResult<Product>> GetAllAsync(int page, int pageSize);
 
     Task<Product?> CreateAsync(
         Product product,

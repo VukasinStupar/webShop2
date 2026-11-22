@@ -1,155 +1,50 @@
-import { useEffect, useState } from "react";
-import Header from "./components/Header";
-import Hero from "./components/Hero";
-import Marketplace from "./components/Marketplace";
-import CategoryStats from "./components/CategoryStats";
-import Footer from "./components/Footer";
-import "./App.css";
-import apiUrl from "./api";
-import CreateProduct from "./components/CreateProduct";
+
+import { Routes, Route, Navigate } from "react-router-dom";
+
+import HomePage from "./HomePage";
+import AdminLogin from "./pages/AdminLogin";
+import AdminRegister from "./pages/AdminRegister";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminRoute from "./components/AdminRoute";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
-    const [search, setSearch] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("Sve kategorije");
-    const [categories, setCategories] = useState([]);
-    const [products, setProducts] = useState([]);
-    const [showCreateProduct, setShowCreateProduct] = useState(false);
-    const [productsRefreshKey, setProductsRefreshKey] = useState(0);
-    const [sortBy, setSortBy] = useState("recommended");
-
-    useEffect(() => {
-        async function getCategories() {
-            try {
-                const response = await fetch(`${apiUrl}/api/Category`);
-
-                if (!response.ok) {
-                    throw new Error(
-                        `Greška pri učitavanju kategorija: ${response.status}`
-                    );
-                }
-
-                const data = await response.json();
-                setCategories(data);
-            } catch (error) {
-                console.error("Greška:", error);
-            }
-        }
-
-        getCategories();
-    }, []);
-
-    useEffect(() => {
-        async function getProducts() {
-            const endpoints = ["/api/Product", "/api/Products"];
-
-            for (const endpoint of endpoints) {
-                try {
-                    const response = await fetch(`${apiUrl}${endpoint}`);
-
-                    if (!response.ok) {
-                        console.warn(
-                            `Proizvodi: ${endpoint} vratio ${response.status}`
-                        );
-                        continue;
-                    }
-
-                    const data = await response.json();
-                    console.log(`PROIZVODI (${endpoint}):`, data);
-
-                    setProducts(
-                        Array.isArray(data)
-                            ? data
-                            : data.items ?? data.products ?? []
-                    );
-
-                    return;
-                } catch (error) {
-                    console.error(`Greška (${endpoint}):`, error);
-                }
-            }
-        }
-
-        getProducts();
-    }, [productsRefreshKey]);
-
-    const stats = categories.map((cat) => ({
-        name: cat.name,
-        count: products
-            .filter((p) => Number(p.categoryId) === Number(cat.id))
-            .reduce((sum, p) => sum + (Number(p.quantity) || 0), 0),
-    }));
-    console.log('stats',stats);
-    
-    async function handleDeleteProduct(id) {
-    if (!window.confirm("Da li sigurno želiš da obrišeš proizvod?")) {
-        return;
-    }
-
-    try {
-        const response = await fetch(`${apiUrl}/api/Product/${id}`, {
-            method: "DELETE"
-        });
-
-        if (!response.ok && response.status !== 404) {
-            throw new Error(`Greška pri brisanju: ${response.status}`);
-        }
-
-        setProducts((prev) => prev.filter((p) => p.id !== id));
-        setProductsRefreshKey((key) => key + 1);
-    } catch (error) {
-        console.error("Greška:", error);
-        alert("Proizvod nije obrisan.");
-    }
-}
-
+    const { isAuthenticated, isAdmin } = useAuth();
 
     return (
-        <div className="app">
-            <Header
-                search={search}
-                onSearchChange={setSearch}
-                onAddProduct={() => setShowCreateProduct(true)}
-                categories={categories}
-                selectedCategory={selectedCategory}
-                onCategoryChange={setSelectedCategory}
-                sortBy={sortBy}
-                onSortChange={setSortBy}
+        <Routes>
+            {/* Javni deo prodavnice */}
+            <Route path="/" element={<HomePage />} />
+
+            {/* Administratorska prijava */}
+            <Route
+                path="/admin/login"
+                element={
+                    isAuthenticated && isAdmin
+                        ? <Navigate to="/admin" replace />
+                        : <AdminLogin />
+                }
             />
 
-            <main className="app__main">
-                {/* <Hero /> */}
+            {/* Registracija administratora */}
+            <Route
+    path="/admin/register"
+    element={<AdminRegister />}
+/>
 
-
-                <Marketplace
-                    search={search}
-                    categories={categories}
-                    selectedCategory={selectedCategory}
-                    onCategoryChange={setSelectedCategory}
-                    sortBy={sortBy}
-                    onDeleteProduct={handleDeleteProduct}
-                    onProductChanged={() =>
-                        setProductsRefreshKey((key) => key + 1)
-                    }
+            {/* Zaštićene administratorske stranice */}
+            <Route element={<AdminRoute />}>
+                <Route
+                    path="/admin"
+                    element={<AdminDashboard />}
                 />
-            </main>
+            </Route>
 
-            <CategoryStats stats={stats} />
+            {/* Nepostojeće rute */}
+            <Route path="*" element={<Navigate to="/" replace />} />
 
-            {showCreateProduct && (
-                <CreateProduct
-                    categories={categories}
-                    onCreated={() => {
-                        setShowCreateProduct(false);
-                        setProductsRefreshKey(
-                            (previousKey) => previousKey + 1
-                        );
-                    }}
-                    onClose={() => setShowCreateProduct(false)}
-                />
-            )}
-
-            <Footer />
-        </div>
+            
+        </Routes>
     );
 }
 

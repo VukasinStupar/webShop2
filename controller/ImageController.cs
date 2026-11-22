@@ -3,6 +3,8 @@ using webShop2.dto.image;
 using webShop2.mapper;
 using webShop2.model;
 using webShop2.services.core;
+using Microsoft.AspNetCore.Authorization;
+
 namespace webShop2.controllers;
 
 [ApiController]
@@ -20,6 +22,7 @@ public class ImageController : ControllerBase
         _mapper = mapper;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost("upload/{productId}")]
     [RequestSizeLimit(10_000_000)]
     public async Task<ActionResult<ImageDto>> Upload(
@@ -101,6 +104,7 @@ public class ImageController : ControllerBase
         return Ok(imagesDto);
     }
 
+
     [HttpGet("{id}")]
     public async Task<ActionResult<ImageDto>> GetById(int id)
     {
@@ -153,6 +157,7 @@ public class ImageController : ControllerBase
         return Ok(dto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<ImageDto>> Create(
         CreateImageDto dto)
@@ -171,6 +176,7 @@ public class ImageController : ControllerBase
             imageDto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<ActionResult<ImageDto>> Update(
         int id,
@@ -200,6 +206,7 @@ public class ImageController : ControllerBase
         return Ok(imageDto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -214,6 +221,7 @@ public class ImageController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}/main")]
     public async Task<ActionResult<ImageDto>> SetMain(int id)
     {

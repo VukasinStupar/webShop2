@@ -91,116 +91,63 @@ public class ProductServiceUnitTests
     }
 
     [Fact]
-    public async Task GetAllAsync_ReturnsAllProducts()
+    public async Task GetAllAsync_ReturnsPagedProducts()
     {
-        List<Product> products =
-        [
-            new Product
-            {
-                Id = 1,
-                Name = "Laptop",
-                Description = "Gaming laptop",
-                Price = 1200,
-                CategoryId = 10
-            },
-            new Product
-            {
-                Id = 2,
-                Name = "Phone",
-                Description = "Smartphone",
-                Price = 800,
-                CategoryId = 10
-            }
-        ];
+        // Arrange
+        List<Product> products = new List<Product>
+    {
+        new Product
+        {
+            Id = 1,
+            Name = "Laptop",
+            Description = "Gaming laptop",
+            Price = 1200,
+            CategoryId = 10
+        },
+        new Product
+        {
+            Id = 2,
+            Name = "Phone",
+            Description = "Smartphone",
+            Price = 800,
+            CategoryId = 10
+        }
+    };
+
+        int page = 1;
+        int pageSize = 10;
+        int totalCount = 25;
 
         _productRepositoryMock
-            .Setup(x => x.GetAllWithImagesAsync())
+            .Setup(x => x.GetAllWithImagesAsync(page, pageSize))
             .ReturnsAsync(products);
 
-        List<Product> result =
-            await _service.GetAllAsync();
+        _productRepositoryMock
+            .Setup(x => x.GetTotalCountAsync())
+            .ReturnsAsync(totalCount);
 
-        Assert.Equal(2, result.Count);
-        Assert.Equal(products, result);
+        // Act
+        PagedResult<Product> result =
+            await _service.GetAllAsync(page, pageSize);
+
+        // Assert
+        Assert.Equal(2, result.Items.Count);
+        Assert.Equal(products, result.Items);
+
+        Assert.Equal(25, result.TotalCount);
+        Assert.Equal(1, result.Page);
+        Assert.Equal(10, result.PageSize);
+        Assert.Equal(3, result.TotalPages);
 
         _productRepositoryMock.Verify(
-            x => x.GetAllWithImagesAsync(),
+            x => x.GetAllWithImagesAsync(page, pageSize),
+            Times.Once);
+
+        _productRepositoryMock.Verify(
+            x => x.GetTotalCountAsync(),
             Times.Once);
     }
 
-    //    [Fact]
-    //    public async Task CreateAsync_AddsProductAndSavesChanges()
-    //    {
-    //        Product product = new Product
-    //        {
-    //            Id = 1,
-    //            Name = "Laptop",
-    //            Description = "Gaming laptop",
-    //            Price = 1200,
-    //            CategoryId = 10
-    //        };
-
-    //        Mock<ICategoryRepository> categoryRepositoryMock =
-    //            new Mock<ICategoryRepository>();
-
-    //        categoryRepositoryMock
-    //            .Setup(x => x.GetByIdAsync(10))
-    //            .ReturnsAsync(new Category
-    //            {
-    //                Id = 10
-    //            });
-
-    //        _unitOfWorkMock
-    //            .Setup(x => x.Categories)
-    //            .Returns(categoryRepositoryMock.Object);
-
-    //        _productRepositoryMock
-    //            .Setup(x => x.AddAsync(product))
-    //            .Returns(Task.CompletedTask);
-
-    //        _unitOfWorkMock
-    //            .Setup(x => x.SaveChangesAsync())
-    //            .ReturnsAsync(1);
-
-
-
-    //        using MemoryStream stream = new MemoryStream(
-    //    new byte[] { 1, 2, 3 });
-
-    //        IFormFile image = new FormFile(
-    //            stream,
-    //            0,
-    //            stream.Length,
-    //            "Images",
-    //            "laptop.jpg");
-
-    //        List<IFormFile> images = new List<IFormFile>
-    //{
-    //    image
-    //};
-    //        _imageStorageMock
-    //    .Setup(x => x.UploadAsync(
-    //        It.IsAny<IFormFile>(),
-    //        It.IsAny<string>()))
-    //    .ReturnsAsync(
-    //        new StoredImage(
-    //            "https://example.com/laptop.jpg",
-    //            "test/laptop"));
-
-    //        Product? result =
-    //            await _service.CreateAsync(product, images);
-
-
-    //        Assert.Equal(product, result);
-
-    //        _productRepositoryMock.Verify(
-    //            x => x.AddAsync(product),
-    //            Times.Once);
-
-    //        _unitOfWorkMock.Verify(
-    //            x => x.SaveChangesAsync(),
-    //            Times.Once);
-    //    }
     [Fact]
     public async Task CreateAsync_AddsProductAndSavesChanges()
     {
