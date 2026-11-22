@@ -71,6 +71,8 @@ namespace webShop2.controllers
         {
             Console.WriteLine("DELETE ACCOUNT ENDPOINT REACHED");
 
+
+
             string? userId = User.FindFirstValue(
                 ClaimTypes.NameIdentifier);
 
@@ -84,12 +86,16 @@ namespace webShop2.controllers
 
             bool deleted = await _authService.DeleteUserAsync(userId);
 
+
+
             Console.WriteLine($"Deletion result: {deleted}");
 
             if (!deleted)
             {
                 return NotFound("User not found or deletion failed.");
             }
+
+
 
             return Ok("Admin account successfully deleted.");
         }
