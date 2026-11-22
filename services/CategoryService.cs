@@ -26,8 +26,13 @@ public class CategoryService : ICategoryService
     }
 
     public async Task<List<Category>> GetRootCategoriesAsync()
+
     {
+
         return await _unitOfWork.Categories.GetRootCategoriesAsync();
+
+
+
     }
 
     public async Task<List<Category>> GetChildrenAsync(int parentId)

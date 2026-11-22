@@ -11,6 +11,8 @@ namespace webShop2.repository
         public ICategoryRepository Categories { get; }
         public IImageRepository Images { get; }
         public IUserRepository Users { get; }
+
+
         public IOrderRepository Orders { get; }
         public IItemRepository Items { get; }
         public IPaymentRepository Payments { get; }
